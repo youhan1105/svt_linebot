@@ -24,13 +24,13 @@ sheet = client.open("First sheet").sheet1
 
 # 全域變數用於追蹤已發送圖片的索引
 global current_row_index
-current_row_index = 0
 data = sheet.get_all_records()# 取得 Google Sheets 所有資料
 
 # 處理收到的訊息事件
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     user_input = event.message.text
+    current_row_index = 0
         
     if user_input == str("抽"):
         image_urls = []
@@ -54,7 +54,7 @@ def handle_message(event):
 
         line_bot_api.reply_message(event.reply_token, image_messages)
 
-    elif user_input == str('下一張'):
+    elif user_input == str("下一張"):
         current_row_index += 1
         if current_row_index < len(data):
             next_row = data[current_row_index]
@@ -86,7 +86,7 @@ def handle_message(event):
 
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="已經是最後一張圖片了"))
 
-    elif user_input == str('上一張'):
+    elif user_input == str("上一張"):
         current_row_index -= 1
         if current_row_index < len(data):
             previous_row = data[current_row_index]
