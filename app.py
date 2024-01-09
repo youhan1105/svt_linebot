@@ -58,11 +58,8 @@ def handle_message(event):
         # 如果沒有符合的圖片編號
         else:  
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合的圖片編號"))
-    else:
-        pass
         
-
-    if user_input == str("抽"):
+    elif user_input == str("抽"):
         image_urls = []
         
         # 隨機選擇一列資料
