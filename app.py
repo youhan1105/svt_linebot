@@ -36,7 +36,7 @@ def handle_message(event):
 
         # 尋找符合的圖片編號      
         for row in data:
-            if user_input == f"G{row['編號']}": 
+            if str(user_input) in row[str('編號')]:
                 image_urls.append(row['圖片網址'])
 
 		# 如果找到符合的圖片網址		   
