@@ -30,7 +30,7 @@ sheet= client.open("First sheet").sheet1
 def handle_message(event):
     user_input = event.message.text
               
-    if user_input.isdigit() and len(user_input) == 8 and user_input.startswith('G'):  # 檢查是否為七碼數字且為G開頭
+    if len(user_input) == 8 and user_input.startswith('G'):  # 檢查是否為七碼數字且為G開頭
         data = sheet.get_all_records()  # 取得 Google Sheets 所有資料
         image_urls = []
 
