@@ -1,6 +1,6 @@
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
-from linebot.models import MessageEvent, TextMessage,TextSendMessage, ImageSendMessage
+from linebot.models import MessageEvent, TextMessage,TextSendMessage, ImageSendMessage, QuickReply, QuickReplyButton, MessageAction
 from linebot.exceptions import InvalidSignatureError
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -40,19 +40,29 @@ def handle_message(event):
 		# 如果找到符合的圖片網址		   
         if image_urls:  
             image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in image_urls]
+            quick_reply_items = [
+                QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
+                QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
+                QuickReplyButton(action=MessageAction(label='抽', text='抽'))
+            ]
+            quick_reply = QuickReply(items=quick_reply_items)
+
+            for image_message in image_messages:
+                image_message.quick_reply = quick_reply
+            
             line_bot_api.reply_message(event.reply_token, image_messages)
         
         # 如果沒有符合的圖片編號
         else:  
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合的圖片編號"))
     
-    elif user_input == "抽":
+    elif user_input == str("抽"):
         data = sheet.get_all_records()
         image_urls = []
         
         # 隨機選擇一列資料
         random_row = random.choice(data)  
-        image_urls = random_row.get('圖片網址')  # 取得圖片網址欄位的文字內容
+        image_urls = random_row.get(row['圖片網址'])  # 取得圖片網址欄位的文字內容
         image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in image_urls]
         line_bot_api.reply_message(event.reply_token, image_messages)
 
