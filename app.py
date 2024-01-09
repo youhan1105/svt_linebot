@@ -23,13 +23,17 @@ creditials = ServiceAccountCredentials.from_json_keyfile_name('gs_credentials.js
 client = gspread.authorize(creditials)
 sheet = client.open("First sheet").sheet1
 
+# 全域變數用於追蹤已發送圖片的索引
+current_row_index = 0
+data = sheet.get_all_records()# 取得 Google Sheets 所有資料
+
 # 處理收到的訊息事件
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    global current_row_index
     user_input = event.message.text
               
     if len(user_input) == 8 and user_input.startswith('G'):  # 檢查是否為七碼數字且為G開頭
-        data = sheet.get_all_records()  # 取得 Google Sheets 所有資料
         image_urls = []
 
         # 尋找符合的圖片編號      
@@ -57,18 +61,37 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合的圖片編號"))
     
     elif user_input == str("抽"):
-        data = sheet.get_all_records()
         image_urls = []
         
         # 隨機選擇一列資料
         random_row = random.choice(data)  
-        image_urls = random_row.get(row['圖片網址'])  # 取得圖片網址欄位的文字內容
+        image_urls = random_row.get('圖片網址')  # 取得圖片網址欄位的文字內容
         image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in image_urls]
         line_bot_api.reply_message(event.reply_token, image_messages)
 
+    elif user_input == str('下一張'):
+        current_row_index += 1
+        if current_row_index < len(data):
+            next_row = data[current_row_index]
+            next_image_urls = next_row.get('圖片網址')
+            next_image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in next_image_urls]
+            line_bot_api.reply_message(event.reply_token, next_image_messages)
+        else:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text="已經是最後一張圖片了"))
+
+    elif user_input == str('上一張'):
+        current_row_index -= 1
+        if current_row_index < len(data):
+            previous_row = data[current_row_index]
+            previous_image_urls = previous_row.get('圖片網址')
+            previous_image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in previous_image_urls]
+            line_bot_api.reply_message(event.reply_token, previous_image_messages)
+        else:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text="已經是第一張圖片了"))
+
+
     # 如果使用者輸入的是任意文字
     else:
-        data = sheet.get_all_records()
         matched_data = []
 
         # 在 Google Sheets 中搜尋符合的圖片編號和圖片名稱
