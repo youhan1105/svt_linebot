@@ -32,16 +32,16 @@ def handle_message(event):
               
     if user_input.isdigit() and len(user_input) == 7:  # 檢查是否為七碼數字
         data = sheet.get_all_records()  # 取得 Google Sheets 所有資料
-        image_url = []
+        image_urls = []
 
         # 尋找符合的圖片編號      
         for row in data:
             if user_input in str(row['編號']):  
-                image_url.append(row['圖片網址'])
+                image_urls.append(row['圖片網址'])
 
 		# 如果找到符合的圖片網址		   
-        if image_url:  
-            image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in image_url]
+        if image_urls:  
+            image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in image_urls]
             line_bot_api.reply_message(event.reply_token, image_messages)
         
         # 如果沒有符合的圖片編號
