@@ -76,7 +76,8 @@ def handle_message(event):
 
         for image_message in image_messages:
             image_message.quick_reply = quick_reply
-        
+            
+        print(image_urls)         
         line_bot_api.reply_message(event.reply_token, image_messages)
 
     elif user_input == str('下一張'):
