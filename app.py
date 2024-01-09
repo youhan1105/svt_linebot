@@ -19,7 +19,7 @@ handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
 
 #Googlesheet串接
 scope = ['https://www.googleapis.com/auth/spreadsheets',
-         'https://www.googleapis.com/auth/drive']
+		 'https://www.googleapis.com/auth/drive']
 
 creditials = ServiceAccountCredentials.from_json_keyfile_name('gs_credentials.json', scope)
 client = gspread.authorize(creditials)
@@ -28,24 +28,49 @@ sheet= client.open("First sheet").sheet1
 # 處理收到的訊息事件
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-		user_input = event.message.text
+    user_input = event.message.text
+              
+    if user_input.isdigit() and len(user_input) == 6:  # 檢查是否為六碼數字
+        data = sheet.get_all_records()  # 取得 Google Sheets 所有資料
+        matched_data = []
+
+        # 尋找符合的圖片編號      
+        for row in data:
+            if user_input in str(row['編號']):  
+                matched_data.append(row['圖片網址'])
+
+		# 如果找到符合的圖片網址		   
+        if matched_data:  
+            reply_message = "\n".join(matched_data)
+            image_url = matched_data  # 替換成您想要傳送的圖片網址
+
+            image_message = ImageSendMessage(
+                original_content_url=image_url,
+                preview_image_url=image_url)
+
+            line_bot_api.reply_message(event.reply_token, image_message)
+        
+        # 如果沒有符合的圖片編號
+        else:  
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合的圖片編號"))
     
-		# 從 Google Sheets 中讀取「中字」欄位資料
-		data = sheet.get_all_records()
-		matched_data = []
-		for row in data:
-			if str(user_input) in row[str('中字')]:
-					matched_data.append(f"{row[str('編號')]} {row[str('中字')]}")
+    # 如果使用者輸入的是任意文字
+    else:
+        data = sheet.get_all_records()
+        matched_data = []
+
+        # 在 Google Sheets 中搜尋符合的圖片編號和圖片名稱
+        for row in data:
+            if str(user_input) in row[str('中字')]:
+                matched_data.append(f"『{row[str('編號')]}』 {row[str('中字')]}")
     
-         # 回覆符合條件的資訊給使用者
-		if matched_data:
-			reply_message = "\n".join(matched_data)
-			line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
-			print(reply_message)
-		else:
-			reply_message = "沒有符合條件的資料"
-			line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
-			print(reply_message)
+        # 回覆符合條件的資訊給使用者
+        if matched_data:
+            reply_message = "\n".join(matched_data)
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
+        else:
+            reply_message = "無符合的資料"
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
 			
 # 處理 Line Bot Webhook
 @app.route("/callback", methods=['POST'])
