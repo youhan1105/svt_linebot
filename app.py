@@ -46,6 +46,16 @@ def handle_message(event):
         else:  
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合的圖片編號"))
     
+    elif user_input == "抽":
+        data = sheet.get_all_records()
+        image_urls = []
+        
+        # 隨機選擇一列資料
+        random_row = random.choice(data)  
+        image_urls = random_row.get('圖片網址')  # 取得圖片網址欄位的文字內容
+        image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in image_urls]
+        line_bot_api.reply_message(event.reply_token, image_messages)
+
     # 如果使用者輸入的是任意文字
     else:
         data = sheet.get_all_records()
