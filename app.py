@@ -32,39 +32,15 @@ data = sheet.get_all_records()# 取得 Google Sheets 所有資料
 def handle_message(event):
     user_input = event.message.text
               
-    if len(user_input) == 8 and user_input.startswith('G'):  # 檢查是否為七碼數字且為G開頭
-        image_urls = []
-
-        # 尋找符合的圖片編號      
-        for row in data:
-            if str(user_input) in row[str('編號')]:
-                image_urls.append(row['圖片網址'])
-
-		# 如果找到符合的圖片網址		   
-        if image_urls:  
-            image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in image_urls]
-            quick_reply_items = [
-                QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
-                QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
-                QuickReplyButton(action=MessageAction(label='抽', text='抽'))
-            ]
-            quick_reply = QuickReply(items=quick_reply_items)
-
-            for image_message in image_messages:
-                image_message.quick_reply = quick_reply
-            
-            line_bot_api.reply_message(event.reply_token, image_messages)
         
-        # 如果沒有符合的圖片編號
-        else:  
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合的圖片編號"))
-        
-    elif user_input == str("抽"):
+    if user_input == str("抽"):
         image_urls = []
         
         # 隨機選擇一列資料
         random_row = random.choice(data)  
         image_urls = random_row.get('圖片網址')  # 取得圖片網址欄位的文字內容
+        print(image_urls)         
+        
         image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in image_urls]
         
         quick_reply_items = [
@@ -76,8 +52,7 @@ def handle_message(event):
 
         for image_message in image_messages:
             image_message.quick_reply = quick_reply
-            
-        print(image_urls)         
+
         line_bot_api.reply_message(event.reply_token, image_messages)
 
     elif user_input == str('下一張'):
@@ -142,6 +117,34 @@ def handle_message(event):
                 previous_image_message.quick_reply = quick_reply     
 
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="已經是第一張圖片了"))
+
+    elif len(user_input) == 8 and user_input.startswith('G'):  # 檢查是否為七碼數字且為G開頭
+        image_urls = []
+
+        # 尋找符合的圖片編號      
+        for row in data:
+            if str(user_input) in row[str('編號')]:
+                image_urls.append(row['圖片網址'])
+
+		# 如果找到符合的圖片網址		   
+        if image_urls:  
+            image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in image_urls]
+            quick_reply_items = [
+                QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
+                QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
+                QuickReplyButton(action=MessageAction(label='抽', text='抽'))
+            ]
+            quick_reply = QuickReply(items=quick_reply_items)
+
+            for image_message in image_messages:
+                image_message.quick_reply = quick_reply
+            
+            line_bot_api.reply_message(event.reply_token, image_messages)
+        
+        # 如果沒有符合的圖片編號
+        else:  
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合的圖片編號"))
+
 
     # 如果使用者輸入的是任意文字
     else:
