@@ -1,8 +1,10 @@
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import MessageEvent, TextMessage,TextSendMessage, ImageSendMessage
-import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+
+import gspread
+import os
 import random
 
 app = Flask(__name__)
