@@ -59,7 +59,7 @@ def handle_message(event):
         if current_row_index < len(data):
             next_row = data[current_row_index]
             next_image_urls = next_row.get('圖片網址')
-            next_image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in next_image_urls]
+            next_image_messages = [ImageSendMessage(original_content_url=next_image_urls, preview_image_url=next_image_urls)]
             
             quick_reply_items = [
                 QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
@@ -91,7 +91,7 @@ def handle_message(event):
         if current_row_index < len(data):
             previous_row = data[current_row_index]
             previous_image_urls = previous_row.get('圖片網址')
-            previous_image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in previous_image_urls]
+            previous_image_messages = [ImageSendMessage(original_content_url=previous_image_urls, preview_image_url=previous_image_urls)]
             
             quick_reply_items = [
                 QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
