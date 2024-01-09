@@ -31,7 +31,6 @@ data = sheet.get_all_records()# 取得 Google Sheets 所有資料
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     user_input = event.message.text
-              
         
     if user_input == str("抽"):
         image_urls = []
@@ -41,7 +40,7 @@ def handle_message(event):
         image_urls = random_row.get('圖片網址')  # 取得圖片網址欄位的文字內容
         print(image_urls)         
         
-        image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in image_urls]
+        image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
         
         quick_reply_items = [
             QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
