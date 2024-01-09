@@ -1,7 +1,4 @@
 line-bot-sdk
-linebot
-linebot.models
-flask
 gunicorn
 gspread
 oauth2client
