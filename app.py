@@ -30,25 +30,19 @@ sheet= client.open("First sheet").sheet1
 def handle_message(event):
     user_input = event.message.text
               
-    if user_input.isdigit() and len(user_input) == 6:  # 檢查是否為六碼數字
+    if user_input.isdigit() and len(user_input) == 7:  # 檢查是否為七碼數字
         data = sheet.get_all_records()  # 取得 Google Sheets 所有資料
-        matched_data = []
+        image_url = []
 
         # 尋找符合的圖片編號      
         for row in data:
             if user_input in str(row['編號']):  
-                matched_data.append(row['圖片網址'])
+                image_url.append(row['圖片網址'])
 
 		# 如果找到符合的圖片網址		   
-        if matched_data:  
-            reply_message = "\n".join(matched_data)
-            image_url = matched_data  # 替換成您想要傳送的圖片網址
-
-            image_message = ImageSendMessage(
-                original_content_url=image_url,
-                preview_image_url=image_url)
-
-            line_bot_api.reply_message(event.reply_token, image_message)
+        if image_url:  
+            image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in image_url]
+            line_bot_api.reply_message(event.reply_token, image_messages)
         
         # 如果沒有符合的圖片編號
         else:  
