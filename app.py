@@ -30,7 +30,6 @@ data = sheet.get_all_records()# 取得 Google Sheets 所有資料
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     user_input = event.message.text
-    current_row_index = 0
         
     if user_input == str("抽"):
         image_urls = []
@@ -38,8 +37,7 @@ def handle_message(event):
         # 隨機選擇一列資料
         random_row = random.choice(data)  
         image_urls = random_row.get('圖片網址')  # 取得圖片網址欄位的文字內容
-        print(image_urls)         
-        
+        current_row_index = data.index(random_row)        
         image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
         
         quick_reply_items = [
@@ -58,7 +56,8 @@ def handle_message(event):
         current_row_index += 1
         if current_row_index < len(data):
             next_row = data[current_row_index]
-            next_image_urls = next_row.get('圖片網址')
+            next_image_urls = next_row.get('圖片網址')     
+            current_row_index = data.index(next_row)   
             next_image_messages = [ImageSendMessage(original_content_url=next_image_urls, preview_image_url=next_image_urls)]
             
             quick_reply_items = [
@@ -88,9 +87,10 @@ def handle_message(event):
 
     elif user_input == str("上一張"):
         current_row_index -= 1
-        if current_row_index < len(data):
+        if current_row_index >= 0:
             previous_row = data[current_row_index]
             previous_image_urls = previous_row.get('圖片網址')
+            current_row_index = data.index(previous_row) 
             previous_image_messages = [ImageSendMessage(original_content_url=previous_image_urls, preview_image_url=previous_image_urls)]
             
             quick_reply_items = [
@@ -124,6 +124,7 @@ def handle_message(event):
         for row in data:
             if str(user_input) in row[str('編號')]:
                 image_urls.append(row['圖片網址'])
+                current_row = row
 
 		# 如果找到符合的圖片網址		   
         if image_urls:  
