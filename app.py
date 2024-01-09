@@ -2,7 +2,6 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.models import MessageEvent, TextMessage,TextSendMessage, ImageSendMessage
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-import pandas as pd 
 import random
 
 #Linebot設定
@@ -22,10 +21,9 @@ client = gspread.authorize(creditials)
 #sheet.share('claire60320@gmail.com',perm_type='user',role='writer')
 
 #本地檔案寫入Googlesheet
-sheet= client.open("First sheet").sheet1
-df = pd.read_csv('goingsvt.csv')
-
-sheet.update([df.columns.values.tolist()] + df.values.tolist())
+#sheet= client.open("First sheet").sheet1
+#df = pd.read_csv('goingsvt.csv')
+#sheet.update([df.columns.values.tolist()] + df.values.tolist())
 
 # 處理收到的訊息事件
 def handle_message(event):
