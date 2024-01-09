@@ -1,6 +1,5 @@
 line-bot-sdk
 flask
-openai < 1.0.0
 gunicorn
 gspread
 oauth2client
