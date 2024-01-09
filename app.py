@@ -24,13 +24,13 @@ client = gspread.authorize(creditials)
 sheet = client.open("First sheet").sheet1
 
 # 全域變數用於追蹤已發送圖片的索引
+global current_row_index
 current_row_index = 0
 data = sheet.get_all_records()# 取得 Google Sheets 所有資料
 
 # 處理收到的訊息事件
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    global current_row_index
     user_input = event.message.text
               
     if len(user_input) == 8 and user_input.startswith('G'):  # 檢查是否為七碼數字且為G開頭
@@ -59,8 +59,11 @@ def handle_message(event):
         # 如果沒有符合的圖片編號
         else:  
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合的圖片編號"))
-    
-    elif user_input == str("抽"):
+    else:
+        pass
+        
+
+    if user_input == str("抽"):
         image_urls = []
         
         # 隨機選擇一列資料
@@ -88,7 +91,6 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, previous_image_messages)
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="已經是第一張圖片了"))
-
 
     # 如果使用者輸入的是任意文字
     else:
