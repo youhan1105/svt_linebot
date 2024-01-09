@@ -22,6 +22,7 @@ scope = ['https://www.googleapis.com/auth/spreadsheets',
 
 creditials = ServiceAccountCredentials.from_json_keyfile_name('gs_credentials.json', scope)
 client = gspread.authorize(creditials)
+sheet= client.open("First sheet").sheet1
 
 # 處理收到的訊息事件
 def handle_message(event):
