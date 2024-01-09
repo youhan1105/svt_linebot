@@ -1,4 +1,6 @@
 line-bot-sdk
+linebot
+linebot.models
 flask
 gunicorn
 gspread
