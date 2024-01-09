@@ -11,7 +11,6 @@ import random
 app = Flask(__name__)
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
-
 #Linebot設定
 channel_access_token = 'mCJ2+jdUUJZ7gvYlTbhHFcs9MPyXn16iV/67s376Fif/XG5a4Mo++0mkcwn2opdG5ExcAcgygV67cGfvBaMO4+sKIyjkuehgmIK1UsZX1CDTZ1FhFjREv4Nr9Mt0Hh6EJ8yDYxrI2stTMfvgDbDnxwdB04t89/1O/w1cDnyilFU='
 line_bot_api = LineBotApi(channel_access_token)
@@ -70,6 +69,17 @@ def handle_message(event):
         random_row = random.choice(data)  
         image_urls = random_row.get('圖片網址')  # 取得圖片網址欄位的文字內容
         image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in image_urls]
+        
+        quick_reply_items = [
+            QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
+            QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
+            QuickReplyButton(action=MessageAction(label='抽', text='抽'))
+        ]
+        quick_reply = QuickReply(items=quick_reply_items)
+
+        for image_message in image_messages:
+            image_message.quick_reply = quick_reply
+        
         line_bot_api.reply_message(event.reply_token, image_messages)
 
     elif user_input == str('下一張'):
@@ -78,8 +88,30 @@ def handle_message(event):
             next_row = data[current_row_index]
             next_image_urls = next_row.get('圖片網址')
             next_image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in next_image_urls]
+            
+            quick_reply_items = [
+                QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
+                QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
+                QuickReplyButton(action=MessageAction(label='抽', text='抽'))
+            ]
+            quick_reply = QuickReply(items=quick_reply_items)
+
+            for next_image_message in next_image_messages:
+                next_image_message.quick_reply = quick_reply
+
             line_bot_api.reply_message(event.reply_token, next_image_messages)
+
         else:
+
+            quick_reply_items = [
+                QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
+                QuickReplyButton(action=MessageAction(label='抽', text='抽'))
+            ]
+            quick_reply = QuickReply(items=quick_reply_items)
+
+            for next_image_message in next_image_messages:
+                next_image_message.quick_reply = quick_reply     
+
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="已經是最後一張圖片了"))
 
     elif user_input == str('上一張'):
@@ -88,8 +120,29 @@ def handle_message(event):
             previous_row = data[current_row_index]
             previous_image_urls = previous_row.get('圖片網址')
             previous_image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in previous_image_urls]
+            
+            quick_reply_items = [
+                QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
+                QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
+                QuickReplyButton(action=MessageAction(label='抽', text='抽'))
+            ]
+            quick_reply = QuickReply(items=quick_reply_items)
+
+            for previous_image_message in previous_image_messages:
+                previous_image_message.quick_reply = quick_reply            
+            
             line_bot_api.reply_message(event.reply_token, previous_image_messages)
         else:
+
+            quick_reply_items = [
+                QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
+                QuickReplyButton(action=MessageAction(label='抽', text='抽'))
+            ]
+            quick_reply = QuickReply(items=quick_reply_items)
+
+            for previous_image_message in previous_image_messages:
+                previous_image_message.quick_reply = quick_reply     
+
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="已經是第一張圖片了"))
 
     # 如果使用者輸入的是任意文字
@@ -99,7 +152,7 @@ def handle_message(event):
         # 在 Google Sheets 中搜尋符合的圖片編號和圖片名稱
         for row in data:
             if str(user_input) in row[str('中字')]:
-                matched_data.append(f"『{row[str('編號')]}』 {row[str('中字')]}")
+                matched_data.append(f"【{row[str('編號')]}】 {row[str('中字')]}")
     
         # 回覆符合條件的資訊給使用者
         if matched_data:
