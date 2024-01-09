@@ -3,7 +3,6 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.models import MessageEvent, TextMessage,TextSendMessage, ImageSendMessage
 from linebot.exceptions import InvalidSignatureError
 from oauth2client.service_account import ServiceAccountCredentials
-from googleapiclient.discovery import build
 
 import gspread
 import os
@@ -20,9 +19,7 @@ handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
 
 # Googlesheet串接
 scope = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
-
 creditials = ServiceAccountCredentials.from_json_keyfile_name('gs_credentials.json', scopes=scope)
-drive_service = build('drive', 'v3', credentials=creditials)  # 建立 Google Drive 服務
 client = gspread.authorize(creditials)
 sheet = client.open("First sheet").sheet1
 
