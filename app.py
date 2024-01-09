@@ -18,15 +18,13 @@ channel_access_token = 'mCJ2+jdUUJZ7gvYlTbhHFcs9MPyXn16iV/67s376Fif/XG5a4Mo++0mk
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
 
-#Googlesheet串接
-scope = ['https://www.googleapis.com/auth/spreadsheets',
-		 'https://www.googleapis.com/auth/drive']
+# Googlesheet串接
+scope = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
 
-creditials = ServiceAccountCredentials.from_json_keyfile_name('gs_credentials.json', scope)
-scoped_creds = creditials.with_scopes(['https://www.googleapis.com/auth/drive']) # 使用已有的憑證來建立驗證
-drive_service = build('drive', 'v3', credentials=scoped_creds) # 建立 Google Drive 服務
+creditials = ServiceAccountCredentials.from_json_keyfile_name('gs_credentials.json', scopes=scope)
+drive_service = build('drive', 'v3', credentials=creditials)  # 建立 Google Drive 服務
 client = gspread.authorize(creditials)
-sheet= client.open("First sheet").sheet1
+sheet = client.open("First sheet").sheet1
 
 # 處理收到的訊息事件
 @handler.add(MessageEvent, message=TextMessage)
