@@ -22,6 +22,19 @@ creditials = ServiceAccountCredentials.from_json_keyfile_name('gs_credentials.js
 client = gspread.authorize(creditials)
 sheet = client.open("First sheet").sheet1
 
+# 處理 Line Bot Webhook
+@app.route("/callback", methods=['POST'])
+def callback():
+    signature = request.headers['X-Line-Signature']
+    body = request.get_data(as_text=True)
+    app.logger.info("Request body: " + body)
+    try:
+        handler.handle(body, signature)
+    except InvalidSignatureError:
+        abort(400)
+    return 'OK'
+
+
 # 全域變數用於追蹤已發送圖片的索引
 global current_row_index
 current_row_index = None
@@ -170,17 +183,7 @@ def handle_message(event):
             reply_message = "無符合的資料"
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
 			
-# 處理 Line Bot Webhook
-@app.route("/callback", methods=['POST'])
-def callback():
-    signature = request.headers['X-Line-Signature']
-    body = request.get_data(as_text=True)
-    app.logger.info("Request body: " + body)
-    try:
-        handler.handle(body, signature)
-    except InvalidSignatureError:
-        abort(400)
-    return 'OK'
+
 
 if __name__ == "__main__":
     app.run()
