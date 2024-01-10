@@ -35,27 +35,27 @@ def handle_message(event):
 
     user_input = event.message.text
         
-    if user_input == str("抽"):
-        if current_row_index is not None:
-            image_urls = []
+    if user_input == str('抽'):
         
-            # 隨機選擇一列資料
-            random_row = random.choice(data)  
-            image_urls = random_row.get('圖片網址')  # 取得圖片網址欄位的文字內容
-            current_row_index = data.index(random_row)        
-            image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
+        image_urls = []
         
-            quick_reply_items = [
-                QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
-                QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
-                QuickReplyButton(action=MessageAction(label='抽', text='抽'))
-            ]
-            quick_reply = QuickReply(items=quick_reply_items)
+        # 隨機選擇一列資料
+        random_row = random.choice(data)  
+        image_urls = random_row.get('圖片網址')  # 取得圖片網址欄位的文字內容
+        current_row_index = data.index(random_row)        
+        image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
+        
+        quick_reply_items = [
+            QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
+            QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
+            QuickReplyButton(action=MessageAction(label='抽', text='抽'))
+        ]
+        quick_reply = QuickReply(items=quick_reply_items)
 
-            for image_message in image_messages:
-                image_message.quick_reply = quick_reply
+        for image_message in image_messages:
+            image_message.quick_reply = quick_reply
 
-            line_bot_api.reply_message(event.reply_token, image_messages)
+        line_bot_api.reply_message(event.reply_token, image_messages)
 
     elif user_input == str("下一張"):
         if current_row_index is not None:
