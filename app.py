@@ -175,11 +175,12 @@ def handle_message(event):
         else:  
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合的圖片編號"))
 
-    elif user_input in emoji_mapping: # 檢查是否有對應的 emoji，若有則隨機抽
+    elif user_input in emoji_mapping: # 抽emoji
         search_condition = emoji_mapping[user_input]
 
         # 搜尋 google sheet 中 "人物" 欄位內容為搜尋條件的橫列
         matching_rows = [row for row in data if row.get('人物') == search_condition]
+        print(matching_rows)
 
         if matching_rows:
             # 隨機選擇一列資料
@@ -187,6 +188,7 @@ def handle_message(event):
             image_urls = random_row.get('圖片網址')  # 取得圖片網址欄位的文字內容
             current_row_index = data.index(random_row)
             image_message = ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)
+            print(image_urls)
 
         # 製作按鈕
             quick_reply_items = [
