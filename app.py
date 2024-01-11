@@ -190,7 +190,7 @@ def handle_message(event):
         # 搜尋 google sheet 中 "成員" 欄位內容為搜尋條件的橫列
         matched_data = []
         for row in data:
-            if str('search_condition') in row[str('成員')]:
+            if str(search_condition) in row[str('成員')]:
                 matched_data.append(row)
 
         if matched_data:
