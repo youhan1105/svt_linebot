@@ -178,12 +178,14 @@ def handle_message(event):
         search_condition = emoji_mapping[user_input]
 
         # 搜尋 google sheet 中 "人物" 欄位內容為搜尋條件的橫列
-        matching_rows = [row for row in data if row.get('成員') == search_condition]
-        print(matching_rows)
+        matched_data = []
+        for row in data:
+            if str(search_condition) in row[str('成員')]:
+                matched_data.append
 
-        if matching_rows:
+        if matched_data:
             # 隨機選擇一列資料
-            random_row = random.choice(matching_rows)
+            random_row = random.choice(matched_data)
             image_urls = random_row.get('圖片網址')  # 取得圖片網址欄位的文字內容
             current_row_index = data.index(random_row)
             image_message = ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)
