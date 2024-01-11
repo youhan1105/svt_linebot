@@ -200,11 +200,27 @@ def handle_message(event):
 
             quick_reply = QuickReply(items=quick_reply_items)
             image_message.quick_reply = quick_reply
+            for image_message in image_messages:
+                image_message.quick_reply = quick_reply
+
 
             line_bot_api.reply_message(event.reply_token, image_message)
         else:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合條件的資料"))
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合條件的emoji"))
 
+    elif re.match(r'^[A-Za-z]\d{3}$', user_input):
+        matched_data = []
+        for row in data:
+            if str(user_input) in row[str('集數')]:
+                matched_data.append(f"【{row[str('編號')]}】 {row[str('中字')]}")
+        
+        if matched_data:
+            reply_message = "\n".join(matched_data)
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
+        
+        else:
+            reply_message = "尚未有此集的資料"
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
 
     else:  #任意文字查詢
         matched_data = []
