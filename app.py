@@ -51,10 +51,20 @@ def handle_message(event):
     global current_row_index
     user_input = event.message.text
 
-    emoji_mapping = {    # 添加其他表情符號
+    emoji_mapping = {
     "\U0001F352": "01",  # 🍒
     "\U0001F430": "02",  # 🐰
     "\U0001F98C": "03",  # 🦌
+    "\U0001F63A": "04",  # 😺
+    "\U0001F42F": "05",  # 🐯
+    "\U0001F408": "06",  # 🐈‍⬛
+    "\U0001F35A": "07",  # 🍚
+    "\U0001F3B1": "08",  # 🎱
+    "\U0001F436": "09",  # 🐶
+    "\U0001F355": "10",  # 🍕
+    "\U0001F34A": "11",  # 🍊
+    "\U0001F3A7": "12",  # 🎧
+    "\U0001F9E6": "13",  # 🦦
     }
         
     if user_input == str('抽'):
@@ -177,11 +187,11 @@ def handle_message(event):
     elif user_input in emoji_mapping: # 抽emoji
         search_condition = emoji_mapping[user_input]
 
-        # 搜尋 google sheet 中 "人物" 欄位內容為搜尋條件的橫列
+        # 搜尋 google sheet 中 "成員" 欄位內容為搜尋條件的橫列
         matched_data = []
         for row in data:
-            if str(search_condition) in row[str('成員')]:
-                matched_data.append
+            if search_condition in row['成員']:
+                matched_data.append(row)
 
         if matched_data:
             # 隨機選擇一列資料
