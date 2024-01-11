@@ -51,11 +51,10 @@ def handle_message(event):
     global current_row_index
     user_input = event.message.text
 
-    emoji_mapping = {
+    emoji_mapping = {    # 添加其他表情符號
     "\U0001F352": "01",  # 🍒
     "\U0001F430": "02",  # 🐰
     "\U0001F98C": "03",  # 🦌
-    # 在此添加其他表情符號的對應條件
     }
         
     if user_input == str('抽'):
@@ -179,7 +178,7 @@ def handle_message(event):
         search_condition = emoji_mapping[user_input]
 
         # 搜尋 google sheet 中 "人物" 欄位內容為搜尋條件的橫列
-        matching_rows = [row for row in data if row.get('人物') == search_condition]
+        matching_rows = [row for row in data if row.get('成員') == search_condition]
         print(matching_rows)
 
         if matching_rows:
@@ -204,7 +203,7 @@ def handle_message(event):
                 image_message.quick_reply = quick_reply
 
 
-            line_bot_api.reply_message(event.reply_token, image_message)
+            line_bot_api.reply_message(event.reply_token, image_messages)
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合條件的emoji"))
 
