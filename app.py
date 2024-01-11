@@ -45,11 +45,17 @@ data = None
 data = sheet.get_all_records() # 取得 Google Sheets 所有資料
 #endregion
 
+emoji_mapping = {
+    "🍒": "01",
+    "🐰": "02",
+    "🦌": "03",
+    # 在此添加其他表情符號的對應條件
+}
+
 #主程式 
 @handler.add(MessageEvent, message=TextMessage) #處理收到的訊息事件
 def handle_message(event):
     global current_row_index
-
     user_input = event.message.text
         
     if user_input == str('抽'):
@@ -169,9 +175,11 @@ def handle_message(event):
         else:  
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合的圖片編號"))
 
-    elif user_input =="🍒":
-        # 搜尋 google sheet 中 "人物" 欄位內容為 "1" 的橫列
-        matching_rows = [row for row in data if row.get('人物') == '01']
+    elif user_input in emoji_mapping: # 檢查是否有對應的 emoji，若有則隨機抽
+        search_condition = emoji_mapping[user_input]
+
+        # 搜尋 google sheet 中 "人物" 欄位內容為搜尋條件的橫列
+        matching_rows = [row for row in data if row.get('人物') == search_condition]
 
         if matching_rows:
             # 隨機選擇一列資料
@@ -179,21 +187,22 @@ def handle_message(event):
             image_urls = random_row.get('圖片網址')  # 取得圖片網址欄位的文字內容
             current_row_index = data.index(random_row)
             image_message = ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)
-        
-            #製作按紐
+
+        # 製作按鈕
             quick_reply_items = [
-            QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
-            QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
-            QuickReplyButton(action=MessageAction(label='抽', text='抽')),
-            QuickReplyButton(action=MessageAction(label='🍒', text='🍒')) ]
+                QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
+                QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
+                QuickReplyButton(action=MessageAction(label='抽', text='抽')),
+                QuickReplyButton(action=MessageAction(label=user_input, text=user_input))
+            ]
 
             quick_reply = QuickReply(items=quick_reply_items)
-            for image_message in image_messages:
-                image_message.quick_reply = quick_reply
+            image_message.quick_reply = quick_reply
 
             line_bot_api.reply_message(event.reply_token, image_message)
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合條件的資料"))
+
 
     else:  #任意文字查詢
         matched_data = []
