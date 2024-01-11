@@ -45,18 +45,18 @@ data = None
 data = sheet.get_all_records() # 取得 Google Sheets 所有資料
 #endregion
 
-emoji_mapping = {
-    "\U0001F352": "01",  # 🍒
-    "\U0001F430": "02",  # 🐰
-    "\U0001F98C": "03",  # 🦌
-    # 在此添加其他表情符號的對應條件
-}
-
 #主程式 
 @handler.add(MessageEvent, message=TextMessage) #處理收到的訊息事件
 def handle_message(event):
     global current_row_index
     user_input = event.message.text
+
+    emoji_mapping = {
+    "\U0001F352": "01",  # 🍒
+    "\U0001F430": "02",  # 🐰
+    "\U0001F98C": "03",  # 🦌
+    # 在此添加其他表情符號的對應條件
+    }
         
     if user_input == str('抽'):
         
@@ -208,7 +208,7 @@ def handle_message(event):
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合條件的emoji"))
 
-    elif re.match(r'^[A-Za-z]\d{3}$', user_input):
+    elif re.match(r'^[A-Za-z]\d{3}$', user_input): # 搜尋集數，得到整集的圖
         matched_data = []
         for row in data:
             if str(user_input) in row[str('集數')]:
