@@ -7,22 +7,25 @@ from oauth2client.service_account import ServiceAccountCredentials
 import gspread
 import os
 import random
+import re
 
 app = Flask(__name__)
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
-#Linebot設定
+#region #Linebot設定 
 channel_access_token = 'mCJ2+jdUUJZ7gvYlTbhHFcs9MPyXn16iV/67s376Fif/XG5a4Mo++0mkcwn2opdG5ExcAcgygV67cGfvBaMO4+sKIyjkuehgmIK1UsZX1CDTZ1FhFjREv4Nr9Mt0Hh6EJ8yDYxrI2stTMfvgDbDnxwdB04t89/1O/w1cDnyilFU='
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
+#endregion
 
-# Googlesheet串接
+#region #Googlesheet串接
 scope = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
 creditials = ServiceAccountCredentials.from_json_keyfile_name('gs_credentials.json', scopes=scope)
 client = gspread.authorize(creditials)
 sheet = client.open("First sheet").sheet1
+#endregion
 
-# 處理 Line Bot Webhook
+#region #處理 Line Bot Webhook
 @app.route("/callback", methods=['POST'])
 def callback():
     signature = request.headers['X-Line-Signature']
@@ -33,16 +36,17 @@ def callback():
     except InvalidSignatureError:
         abort(400)
     return 'OK'
+#endregion
 
-
-# 全域變數用於追蹤已發送圖片的索引
+#region #全域變數用於追蹤已發送圖片的索引
 global current_row_index
 current_row_index = None
 data = None
-data = sheet.get_all_records()# 取得 Google Sheets 所有資料
+data = sheet.get_all_records() # 取得 Google Sheets 所有資料
+#endregion
 
-# 處理收到的訊息事件
-@handler.add(MessageEvent, message=TextMessage)
+#主程式 
+@handler.add(MessageEvent, message=TextMessage) #處理收到的訊息事件
 def handle_message(event):
     global current_row_index
 
@@ -52,19 +56,19 @@ def handle_message(event):
         
         image_urls = []
         
-        # 隨機選擇一列資料
+        #隨機選擇一列資料
         random_row = random.choice(data)  
-        image_urls = random_row.get('圖片網址')  # 取得圖片網址欄位的文字內容
+        image_urls = random_row.get('圖片網址')  #取得圖片網址欄位的文字內容
         current_row_index = data.index(random_row)        
         image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
         
+        #製作按紐
         quick_reply_items = [
             QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
             QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
             QuickReplyButton(action=MessageAction(label='抽', text='抽'))
         ]
         quick_reply = QuickReply(items=quick_reply_items)
-
         for image_message in image_messages:
             image_message.quick_reply = quick_reply
 
@@ -137,7 +141,7 @@ def handle_message(event):
 
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="已經是第一張圖片了"))
 
-    elif len(user_input) == 8 and user_input.startswith('G'):  # 檢查是否為七碼數字且為G開頭
+    elif re.match(r'^[A-Za-z]', user_input) and len(user_input) == 8:  # 檢查是否為八字元且為英文開頭
         image_urls = []
 
         # 尋找符合的圖片編號      
@@ -165,9 +169,33 @@ def handle_message(event):
         else:  
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合的圖片編號"))
 
+    elif user_input =="🍒":
+        # 搜尋 google sheet 中 "人物" 欄位內容為 "1" 的橫列
+        matching_rows = [row for row in data if row.get('人物') == '01']
 
-    # 如果使用者輸入的是任意文字
-    else:
+        if matching_rows:
+            # 隨機選擇一列資料
+            random_row = random.choice(matching_rows)
+            image_urls = random_row.get('圖片網址')  # 取得圖片網址欄位的文字內容
+            current_row_index = data.index(random_row)
+            image_message = ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)
+        
+            #製作按紐
+            quick_reply_items = [
+            QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
+            QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
+            QuickReplyButton(action=MessageAction(label='抽', text='抽'))
+            QuickReplyButton(action=MessageAction(label='🍒', text='🍒'))
+        ]
+            quick_reply = QuickReply(items=quick_reply_items)
+            for image_message in image_messages:
+                image_message.quick_reply = quick_reply
+
+            line_bot_api.reply_message(event.reply_token, image_message)
+        else:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合條件的資料"))
+
+    else:  #任意文字查詢
         matched_data = []
 
         # 在 Google Sheets 中搜尋符合的圖片編號和圖片名稱
@@ -182,7 +210,6 @@ def handle_message(event):
         else:
             reply_message = "無符合的資料"
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
-			
 
 
 if __name__ == "__main__":
