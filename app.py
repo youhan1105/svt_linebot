@@ -184,9 +184,9 @@ def handle_message(event):
             quick_reply_items = [
             QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
             QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
-            QuickReplyButton(action=MessageAction(label='抽', text='抽'))
-            QuickReplyButton(action=MessageAction(label='🍒', text='🍒'))
-        ]
+            QuickReplyButton(action=MessageAction(label='抽', text='抽')),
+            QuickReplyButton(action=MessageAction(label='🍒', text='🍒')) ]
+
             quick_reply = QuickReply(items=quick_reply_items)
             for image_message in image_messages:
                 image_message.quick_reply = quick_reply
