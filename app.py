@@ -205,9 +205,16 @@ def handle_message(event):
         matched_data = []
         image_urls = []
         for row in data:
-            if str(search_condition) in row[str('成員')]:
-                matched_data.append(row)
-                print(matched_data)
+            # 檢查 "成員" 欄位的值是否可迭代
+            if hasattr(row[str('成員')], '__iter__'):
+                if str(search_condition) in row[str('成員')]:
+                    matched_data.append(row)
+                    print(matched_data)
+            else:
+                # 如果 "成員" 欄位的值不可迭代，將其轉換為字符串再進行比較
+                if str(search_condition) == str(row[str('成員')]):
+                    matched_data.append(row)
+                    print(matched_data)
 
         if matched_data:
             # 隨機選擇一列資料
