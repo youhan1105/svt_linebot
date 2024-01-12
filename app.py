@@ -53,17 +53,17 @@ def handle_message(event):
     user_input = event.message.text
 
     emoji_mapping = {
-        emoji.emojize("🍒"): "01",
-        emoji.emojize("🐰"): "02",
-        emoji.emojize("🦌"): "03",
-        emoji.emojize("😺"): "04",
-        emoji.emojize("🐯"): "05",
-        emoji.emojize("🐹"): "05",
-        emoji.emojize("🐈‍⬛"): "06",
-        emoji.emojize("🍚"): "07",
-        emoji.emojize("🎱"): "08",
-        emoji.emojize("🐸"): "08",
-        emoji.emojize("🐶"): "09",
+        emoji.emojize("🍒"): "1",
+        emoji.emojize("🐰"): "2",
+        emoji.emojize("🦌"): "3",
+        emoji.emojize("😺"): "4",
+        emoji.emojize("🐯"): "5",
+        emoji.emojize("🐹"): "5",
+        emoji.emojize("🐈‍⬛"): "6",
+        emoji.emojize("🍚"): "7",
+        emoji.emojize("🎱"): "8",
+        emoji.emojize("🐸"): "8",
+        emoji.emojize("🐶"): "9",
         emoji.emojize("⚔️"): "10",
         emoji.emojize("🍕"): "10",
         emoji.emojize("🍊"): "11",
@@ -229,7 +229,7 @@ def handle_message(event):
             image_urls = random_row.get('圖片網址')  # 取得圖片網址欄位的文字內容
             current_row_index = data.index(random_row)
             image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
-            print(f"Matched Data: {matched_data}")
+
         # 製作按鈕
             quick_reply_items = [
                 QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
@@ -246,7 +246,6 @@ def handle_message(event):
 
             line_bot_api.reply_message(event.reply_token, image_messages)
         else:
-            print(f"No matched data for search_condition: {search_condition}")
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合條件的emoji"))
 
     else:  #任意文字查詢
