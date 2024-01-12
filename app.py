@@ -206,15 +206,8 @@ def handle_message(event):
         image_urls = []
         for row in data:
             # 檢查 "成員" 欄位的值是否可迭代
-            if hasattr(row[str('成員')], '__iter__'):
-                if str(search_condition) in row[str('成員')]:
-                    matched_data.append(row)
-                    print(matched_data)
-            else:
-                # 如果 "成員" 欄位的值不可迭代，將其轉換為字符串再進行比較
-                if str(search_condition) == str(row[str('成員')]):
-                    matched_data.append(row)
-                    print(matched_data)
+            if str(search_condition) == str(row[str('成員')]):
+                matched_data.append(row)
 
         if matched_data:
             # 隨機選擇一列資料
@@ -222,7 +215,6 @@ def handle_message(event):
             image_urls = random_row.get('圖片網址')  # 取得圖片網址欄位的文字內容
             current_row_index = data.index(random_row)
             image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
-            print(image_urls)
 
         # 製作按鈕
             quick_reply_items = [
