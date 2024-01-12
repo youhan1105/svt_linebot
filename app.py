@@ -203,6 +203,7 @@ def handle_message(event):
 
         # 搜尋 google sheet 中 "成員" 欄位內容為搜尋條件的橫列
         matched_data = []
+        image_urls = []
         for row in data:
             if search_condition in row[str('成員')]:
                 matched_data.append(row)
@@ -213,7 +214,7 @@ def handle_message(event):
             random_row = random.choice(matched_data)
             image_urls = random_row.get('圖片網址')  # 取得圖片網址欄位的文字內容
             current_row_index = data.index(random_row)
-            image_message = ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)
+            image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
             print(image_urls)
 
         # 製作按鈕
