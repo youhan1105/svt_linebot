@@ -8,6 +8,7 @@ import gspread
 import os
 import random
 import re
+import emoji
 
 app = Flask(__name__)
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
@@ -52,25 +53,25 @@ def handle_message(event):
     user_input = event.message.text
 
     emoji_mapping = {
-    "🍒": "01",
-    "🐰": "02",
-    "🦌": "03",
-    "😺": "04",
-    "🐯": "05",
-    "🐹": "05",
-    "🐈‍⬛": "06",
-    "🍚": "07",
-    "🎱": "08",
-    "🐸": "08",
-    "🐶": "09",
-    "⚔️": "10",
-    "🍕": "10",
-    "🍊": "11",
-    "🐻": "11",
-    "🐻‍❄️": "12",
-    "🎧": "12",
-    "🦖": "13",
-    "🦦": "13",
+        emoji.demojize("🍒"): "01",
+        emoji.demojize("🐰"): "02",
+        emoji.demojize("🦌"): "03",
+        emoji.demojize("😺"): "04",
+        emoji.demojize("🐯"): "05",
+        emoji.demojize("🐹"): "05",
+        emoji.demojize("🐈‍⬛"): "06",
+        emoji.demojize("🍚"): "07",
+        emoji.demojize("🎱"): "08",
+        emoji.demojize("🐸"): "08",
+        emoji.demojize("🐶"): "09",
+        emoji.demojize("⚔️"): "10",
+        emoji.demojize("🍕"): "10",
+        emoji.demojize("🍊"): "11",
+        emoji.demojize("🐻"): "11",
+        emoji.demojize("🐻‍❄️"): "12",
+        emoji.demojize("🎧"): "12",
+        emoji.demojize("🦖"): "13",
+        emoji.demojize("🦦"): "13",
     }
         
     if user_input == str('抽'):
