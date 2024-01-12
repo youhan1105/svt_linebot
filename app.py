@@ -53,25 +53,25 @@ def handle_message(event):
     user_input = event.message.text
 
     emoji_mapping = {
-        emoji.demojize("🍒"): "01",
-        emoji.demojize("🐰"): "02",
-        emoji.demojize("🦌"): "03",
-        emoji.demojize("😺"): "04",
-        emoji.demojize("🐯"): "05",
-        emoji.demojize("🐹"): "05",
-        emoji.demojize("🐈‍⬛"): "06",
-        emoji.demojize("🍚"): "07",
-        emoji.demojize("🎱"): "08",
-        emoji.demojize("🐸"): "08",
-        emoji.demojize("🐶"): "09",
-        emoji.demojize("⚔️"): "10",
-        emoji.demojize("🍕"): "10",
-        emoji.demojize("🍊"): "11",
-        emoji.demojize("🐻"): "11",
-        emoji.demojize("🐻‍❄️"): "12",
-        emoji.demojize("🎧"): "12",
-        emoji.demojize("🦖"): "13",
-        emoji.demojize("🦦"): "13",
+        emoji.emojize("🍒"): "01",
+        emoji.emojize("🐰"): "02",
+        emoji.emojize("🦌"): "03",
+        emoji.emojize("😺"): "04",
+        emoji.emojize("🐯"): "05",
+        emoji.emojize("🐹"): "05",
+        emoji.emojize("🐈‍⬛"): "06",
+        emoji.emojize("🍚"): "07",
+        emoji.emojize("🎱"): "08",
+        emoji.emojize("🐸"): "08",
+        emoji.emojize("🐶"): "09",
+        emoji.emojize("⚔️"): "10",
+        emoji.emojize("🍕"): "10",
+        emoji.emojize("🍊"): "11",
+        emoji.emojize("🐻"): "11",
+        emoji.emojize("🐻‍❄️"): "12",
+        emoji.emojize("🎧"): "12",
+        emoji.emojize("🦖"): "13",
+        emoji.emojize("🦦"): "13",
     }
         
     if user_input == str('抽'):
@@ -206,7 +206,7 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
 
     elif user_input in emoji_mapping: # 抽emoji
-        search_condition = emoji_mapping[user_input]
+        search_condition = emoji.emojize(emoji_mapping[user_input])
 
         # 搜尋 google sheet 中 "成員" 欄位內容為搜尋條件的橫列
         matched_data = []
