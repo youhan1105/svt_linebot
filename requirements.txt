@@ -3,3 +3,4 @@ gunicorn
 Flask
 gspread
 oauth2client
+emoji==1.4.2
