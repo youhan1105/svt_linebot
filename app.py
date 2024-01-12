@@ -205,7 +205,7 @@ def handle_message(event):
         matched_data = []
         image_urls = []
         for row in data:
-            if search_condition in row[str('成員')]:
+            if str(search_condition) in row[str('成員')]:
                 matched_data.append(row)
                 print(matched_data)
 
@@ -226,7 +226,7 @@ def handle_message(event):
             ]
 
             quick_reply = QuickReply(items=quick_reply_items)
-            image_message.quick_reply = quick_reply
+            
             for image_message in image_messages:
                 image_message.quick_reply = quick_reply
 
