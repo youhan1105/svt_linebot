@@ -229,7 +229,7 @@ def handle_message(event):
             image_urls = random_row.get('圖片網址')  # 取得圖片網址欄位的文字內容
             current_row_index = data.index(random_row)
             image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
-
+            print(f"Matched Data: {matched_data}")
         # 製作按鈕
             quick_reply_items = [
                 QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
@@ -246,6 +246,7 @@ def handle_message(event):
 
             line_bot_api.reply_message(event.reply_token, image_messages)
         else:
+            print(f"No matched data for search_condition: {search_condition}")
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合條件的emoji"))
 
     else:  #任意文字查詢
