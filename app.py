@@ -216,12 +216,10 @@ def handle_message(event):
             if hasattr(row[str('成員')], '__iter__'):
                 if str(search_condition) in row[str('成員')]:
                     matched_data.append(row)
-                    print(matched_data)
             else:
                 # 如果 "成員" 欄位的值不可迭代，將其轉換為字符串再進行比較
                 if str(search_condition) == str(row[str('成員')]):
                     matched_data.append(row)
-                    print(matched_data)
 
         if matched_data:
             # 隨機選擇一列資料
@@ -242,7 +240,6 @@ def handle_message(event):
             
             for image_message in image_messages:
                 image_message.quick_reply = quick_reply
-
 
             line_bot_api.reply_message(event.reply_token, image_messages)
         else:
