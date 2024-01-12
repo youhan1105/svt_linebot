@@ -51,7 +51,7 @@ def handle_message(event):
     global current_row_index
     user_input = event.message.text
 
-emoji_mapping = {
+    emoji_mapping = {
     "🍒": "01",
     "🐰": "02",
     "🦌": "03",
@@ -71,7 +71,7 @@ emoji_mapping = {
     "🎧": "12",
     "🦖": "13",
     "🦦": "13",
-}
+    }
         
     if user_input == str('抽'):
         
