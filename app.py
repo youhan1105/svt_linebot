@@ -211,7 +211,7 @@ def handle_message(event):
         matched_data = []
         image_urls = []
         for row in data:
-            if str(search_condition) == str(row[str('成員')]):
+            if search_condition == str(row[str('成員')]):
                 matched_data.append(row)
 
         if matched_data:
