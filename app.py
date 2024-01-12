@@ -52,7 +52,7 @@ def handle_message(event):
     user_input = event.message.text
 
     emoji_mapping = {
-    "\U0001F352": "01",  # 🍒
+    "\U0001F352": "哲",  # 🍒
     "\U0001F430": "02",  # 🐰
     "\U0001F98C": "03",  # 🦌
     "\U0001F63A": "04",  # 😺
@@ -184,14 +184,29 @@ def handle_message(event):
         else:  
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合的圖片編號"))
 
+    elif re.match(r'^[A-Za-z]\d{3}$', user_input): # 搜尋集數，得到整集的圖
+        matched_data = []
+        for row in data:
+            if str(user_input) in row[str('集數')]:
+                matched_data.append(f"【{row[str('編號')]}】 {row[str('中字')]}")
+        
+        if matched_data:
+            reply_message = "\n".join(matched_data)
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
+        
+        else:
+            reply_message = "尚未有此集的資料"
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
+
     elif user_input in emoji_mapping: # 抽emoji
         search_condition = emoji_mapping[user_input]
 
         # 搜尋 google sheet 中 "成員" 欄位內容為搜尋條件的橫列
         matched_data = []
         for row in data:
-            if str(search_condition) in row[str('成員')]:
+            if search_condition in row[str('成員')]:
                 matched_data.append(row)
+                print(matched_data)
 
         if matched_data:
             # 隨機選擇一列資料
@@ -218,20 +233,6 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, image_messages)
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合條件的emoji"))
-
-    elif re.match(r'^[A-Za-z]\d{3}$', user_input): # 搜尋集數，得到整集的圖
-        matched_data = []
-        for row in data:
-            if str(user_input) in row[str('集數')]:
-                matched_data.append(f"【{row[str('編號')]}】 {row[str('中字')]}")
-        
-        if matched_data:
-            reply_message = "\n".join(matched_data)
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
-        
-        else:
-            reply_message = "尚未有此集的資料"
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
 
     else:  #任意文字查詢
         matched_data = []
