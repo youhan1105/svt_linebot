@@ -54,9 +54,10 @@ def handle_message(event):
 
     emoji_mapping = {
         emoji.emojize("🍒"): "1",
+        emoji.emojize("🦁"): "1",       
         emoji.emojize("🐰"): "2",
         emoji.emojize("🦌"): "3",
-        emoji.emojize("😺"): "4",
+        emoji.emojize("🐱"): "4",
         emoji.emojize("🐯"): "5",
         emoji.emojize("🐹"): "5",
         emoji.emojize("🐈‍⬛"): "6",
@@ -86,6 +87,7 @@ def handle_message(event):
         
         #製作按紐
         quick_reply_items = [
+            QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號'))
             QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
             QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
             QuickReplyButton(action=MessageAction(label='抽', text='抽'))
@@ -95,6 +97,15 @@ def handle_message(event):
             image_message.quick_reply = quick_reply
 
         line_bot_api.reply_message(event.reply_token, image_messages)
+
+    elif user_input == str('取得編號'):
+        if current_row_index is not None:
+            if current_row_index < len(data):
+                current_row = data[current_row_index]
+                image_number = current_row.get('編號')
+                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"圖片編號為：\n{image_number}"))
+        else:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text="請先抽圖片"))
 
     elif user_input == str("下一張"):
         if current_row_index is not None:
@@ -106,6 +117,7 @@ def handle_message(event):
                 next_image_messages = [ImageSendMessage(original_content_url=next_image_urls, preview_image_url=next_image_urls)]
             
                 quick_reply_items = [
+                    QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號'))
                     QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
                     QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
                     QuickReplyButton(action=MessageAction(label='抽', text='抽'))
@@ -120,6 +132,7 @@ def handle_message(event):
             else:
 
                 quick_reply_items = [
+                    QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號'))
                     QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
                     QuickReplyButton(action=MessageAction(label='抽', text='抽'))
                 ]
@@ -140,6 +153,7 @@ def handle_message(event):
                 previous_image_messages = [ImageSendMessage(original_content_url=previous_image_urls, preview_image_url=previous_image_urls)]
             
                 quick_reply_items = [
+                    QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號'))
                     QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
                     QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
                     QuickReplyButton(action=MessageAction(label='抽', text='抽'))
@@ -153,6 +167,7 @@ def handle_message(event):
         else:
 
             quick_reply_items = [
+                QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號'))
                 QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
                 QuickReplyButton(action=MessageAction(label='抽', text='抽'))
             ]
@@ -176,6 +191,7 @@ def handle_message(event):
         if image_urls:  
             image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in image_urls]
             quick_reply_items = [
+                QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號'))
                 QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
                 QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
                 QuickReplyButton(action=MessageAction(label='抽', text='抽'))
@@ -230,6 +246,7 @@ def handle_message(event):
 
         # 製作按鈕
             quick_reply_items = [
+                QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號'))
                 QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
                 QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
                 QuickReplyButton(action=MessageAction(label='抽', text='抽')),
