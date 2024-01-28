@@ -3,6 +3,7 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.models import MessageEvent, TextMessage,TextSendMessage, ImageSendMessage, QuickReply, QuickReplyButton, MessageAction
 from linebot.exceptions import InvalidSignatureError
 from oauth2client.service_account import ServiceAccountCredentials
+from message_handler import handle_message
 
 import gspread
 import os
