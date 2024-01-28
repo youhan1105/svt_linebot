@@ -9,32 +9,7 @@ import os
 import random
 import re
 import emoji
-
-app = Flask(__name__)
-static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
-
-#region #處理 Line Bot Webhook
-@app.route("/callback", methods=['POST'])
-def callback():
-    signature = request.headers['X-Line-Signature']
-    body = request.get_data(as_text=True)
-    app.logger.info("Request body: " + body)
-    try:
-        handler.handle(body, signature)
-    except InvalidSignatureError:
-        abort(400)
-    return 'OK'
-#endregion
-
-#region #全域變數用於追蹤已發送圖片的索引
-global current_row_index
-current_row_index = None
-data = None
-data = sheet.get_all_records() # 取得 Google Sheets 所有資料
-#endregion
-
-#主程式 
-@handler.add(MessageEvent, message=TextMessage) #處理收到的訊息事件
+ 
 def handle_message(event):
     global current_row_index
     user_input = event.message.text
