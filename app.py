@@ -104,15 +104,16 @@ def handle_message(event):
                 current_row = data[current_row_index]
                 image_number = current_row.get('編號')
                 image_name = current_row.get('中字')
+                text_message = TextSendMessage(text=f"圖片編號為：\n【{image_number}】{image_name}", quick_reply=quick_reply)
 
                 quick_reply_items = [
                     QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
                     QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
                     QuickReplyButton(action=MessageAction(label='抽', text='抽'))
                 ]
+                quick_reply = QuickReply(items=quick_reply_items)
 
-                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"圖片編號為：\n【{image_number}】{image_name}"))
-
+                line_bot_api.reply_message(event.reply_token, text_message)
             else:
                 line_bot_api.reply_message(event.reply_token, TextSendMessage(text="請先抽圖片"))
 
