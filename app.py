@@ -103,9 +103,10 @@ def handle_message(event):
             if current_row_index < len(data):
                 current_row = data[current_row_index]
                 image_number = current_row.get('編號')
-                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"圖片編號為：\n{image_number}"))
-        else:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text="請先抽圖片"))
+                image_name = current_row.get('中字')
+                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"圖片編號為：\n【{image_number}】{image_name}"))
+            else:
+                line_bot_api.reply_message(event.reply_token, TextSendMessage(text="請先抽圖片"))
 
     elif user_input == str("下一張"):
         if current_row_index is not None:
