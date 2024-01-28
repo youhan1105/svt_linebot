@@ -53,15 +53,6 @@ data = sheet.get_all_records() # 取得 Google Sheets 所有資料
 def handle_message_event(event):
     handle_message(event)
 
-# 處理選單點擊事件
-@handler.add(PostbackEvent)
-def handle_postback_event(event):
-    handle_menu(event)
-
-# 處理 LIFF 事件
-@handler.add(MessageEvent, message=MessageEvent)
-def handle_message_event(event):
-    handle_liff(event)
 
 if __name__ == "__main__":
     app.run()
