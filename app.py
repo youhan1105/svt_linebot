@@ -29,6 +29,7 @@ sheet = client.open("First sheet").sheet1
 
 #region #處理 Line Bot Webhook
 @app.route("/callback", methods=['POST'])
+
 def callback():
     signature = request.headers['X-Line-Signature']
     body = request.get_data(as_text=True)
@@ -46,7 +47,6 @@ current_row_index = None
 data = None
 data = sheet.get_all_records() # 取得 Google Sheets 所有資料
 #endregion
-
 
 
 # 處理訊息事件
