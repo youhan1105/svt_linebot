@@ -97,17 +97,17 @@ def handle_message(event):
                         title='圖庫集數總覽',
                         text='已收錄集數',
                         actions=[
-                            MessageAction(text='已收錄集數')
+                            MessageAction(text='已收錄集數'),
+                            MessageAction(text='集數列表')
                         ]
-                    )
-                    ,
+                    ),
                     CarouselColumn(
                         thumbnail_image_url='https://i.imgur.com/ZUHsoJb.jpg',
                         title='編碼規則',
                         text='系列+集數+成員+編號',
                         actions=[
-                            MessageAction(label='編碼說明', text='編碼說明'),
-                            MessageAction(label='舉例', text='舉例')
+                            MessageAction(text='編碼說明'),
+                            MessageAction(text='舉例')
                         ]
                     )
                 ]
@@ -115,10 +115,7 @@ def handle_message(event):
         )
 
         # 發送多頁訊息
-        line_bot_api.reply_message(
-            event.reply_token,
-            carousel_template_message
-        )
+        line_bot_api.reply_message(event.reply_token, carousel_template_message)
 
     elif user_input ==  str('圖/搜尋關鍵字/特定圖片'):
         message = "🎲隨機圖片：\n輸入「抽」，獲得隨機圖片\n\n🔍搜尋圖片：\n輸入關鍵字，尋找符合的所有圖片\n\n📸發送圖片：\n輸入圖片編號，獲得指定圖片"
