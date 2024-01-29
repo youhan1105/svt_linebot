@@ -1,6 +1,6 @@
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
-from linebot.models import MessageEvent, TextMessage,TextSendMessage, ImageSendMessage, QuickReply, QuickReplyButton, MessageAction, TemplateSendMessage, ButtonsTemplate
+from linebot.models import MessageEvent, TextMessage,TextSendMessage, ImageSendMessage, QuickReply, QuickReplyButton, MessageAction, TemplateSendMessage, CarouselTemplate, CarouselColumn
 from linebot.exceptions import InvalidSignatureError
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -78,41 +78,40 @@ def handle_message(event):
     }
         
     if user_input == str('詳細功能'):
-        # 建立多頁訊息
-        page1_buttons_template_message = TemplateSendMessage(
+    # 建立多頁訊息 - 使用 Carousel Template
+        carousel_template_message = TemplateSendMessage(
             alt_text='功能說明',
-            template=ButtonsTemplate(
-            thumbnail_image_url='https://github.com/youhan1105/linebot-content/blob/main/image/page01.jpg',
-            title='功能說明',
-            text='本機器人功能說明',
-            
-            actions=[
-                MessageAction(label='抽圖/搜尋/特定圖片', text='抽圖/搜尋/特定圖片'),
-                MessageAction(label='指定成員/指定集數', text='指定成員/指定集數')
-            ]
-            )
-        )
-
-        page2_buttons_template_message = TemplateSendMessage(
-            alt_text='編碼規則',
-            template=ButtonsTemplate(
-            thumbnail_image_url='https://github.com/youhan1105/linebot-content/blob/main/image/多頁-02.jpg',
-            title='編碼規則',
-            text='系列+集數+成員+編號',
-            actions=[
-                MessageAction(label='編碼說明', text='編碼說明'),
-                MessageAction(label='舉例', text='舉例')
-            ]
+            template=CarouselTemplate(
+                columns=[
+                    CarouselColumn(
+                        thumbnail_image_url='https://github.com/youhan1105/linebot-content/blob/main/image/page01.jpg',
+                        title='功能說明',
+                        text='本機器人功能說明',
+                        actions=[
+                            MessageAction(label='抽圖/搜尋關鍵字/特定圖片', text='圖/搜尋關鍵字/特定圖片'),
+                            MessageAction(label='指定成員/指定集數', text='指定成員/指定集數')
+                        ]
+                    ),
+                    CarouselColumn(
+                        thumbnail_image_url='https://example.com/page2.jpg',
+                        title='編碼規則',
+                        text='系列+集數+成員+編號',
+                        actions=[
+                            MessageAction(label='編碼說明', text='編碼說明'),
+                            MessageAction(label='舉例', text='舉例')
+                        ]
+                    )
+                ]
             )
         )
 
         # 發送多頁訊息
         line_bot_api.reply_message(
             event.reply_token,
-            [page1_buttons_template_message,page2_buttons_template_message]
+            carousel_template_message
         )
 
-    elif user_input ==  str('抽圖/搜尋/特定圖片'):
+    elif user_input ==  str('圖/搜尋關鍵字/特定圖片'):
         message = "🎲隨機圖片：\n輸入「抽」，獲得隨機圖片\n\n🔍搜尋圖片：\n輸入關鍵字，尋找符合的所有圖片\n\n📸發送圖片：\n輸入圖片編號，獲得指定圖片"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
 
