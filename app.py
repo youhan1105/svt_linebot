@@ -107,14 +107,22 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, carousel_message)
 
     elif user_input == "抽圖/搜尋關鍵字/特定圖片":
-        reply_message = "🎲隨機圖片：\n輸入「抽」，獲得隨機圖片\n\n🔍搜尋圖片：\n輸入關鍵字，尋找符合的所有圖片\n\n📸發送圖片：\n輸入圖片編號，獲得指定圖片\n\n\n🍒抽指定成員：\n輸入成員各自的emoji，獲得該成員隨機圖片\n\n🔢整集列表：\n輸入「1英文+3數字」，獲得該集全部圖片之列表"
+        reply_message = "🎲隨機圖片：\n輸入「抽」，獲得隨機圖片\n\n🔍搜尋圖片：\n輸入關鍵字，尋找符合的所有圖片\n\n📸發送圖片：\n輸入圖片編號，獲得指定圖片\n\n-\n🍒抽指定成員：\n輸入成員各自的emoji，獲得該成員隨機圖片\n\n🔢整集列表：\n輸入「1英文+3數字」，獲得該集全部圖片之列表"
+
+        quick_reply_items = [
+            QuickReplyButton(action=MessageAction(label='抽', text='抽'))
+        ]
+        quick_reply = QuickReply(items=quick_reply_items)
+        for image_message in image_messages:
+            image_message.quick_reply = quick_reply
+
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
 
     elif user_input == "編碼說明":
         # 文字消息1
-        reply_message_text1 = "編碼：1英文+7數字\n『系列+集數+成員+編號』\n\n🔠首位英文：頻道與系列\n👉G為going seventeen，S為Special特輯。以官方頻道為準，詳情參考「圖庫集數總覽」。\n\n3️⃣三碼數字：年份與集數\n👉Going系列，首位數字為年份，後兩碼為集數。若有上下兩集，以上集編碼。\n👉其他系列從001開始。\n\n2️⃣兩碼數字：成員編號\n👉01～13。\n\n👉若有兩位以上成員，以00編碼。\n\n2️⃣兩碼數字：圖片編號\n👉從01開始。"
+        reply_message_text1 = "編碼：1英文+7數字\n『系列+集數+成員+編號』\n\n🔠首位英文：頻道與系列\n👉G為going seventeen，S為Special特輯。以官方頻道為準，詳情參考「圖庫集數總覽」。\n\n3️⃣三碼數字：年份與集數\n👉Going系列，首位數字為年份，後兩碼為集數。若有上下兩集，以上集編碼。\n👉其他系列從001開始。\n\n2️⃣兩碼數字：成員編號\n👉01～13。\n👉若有兩位以上成員，以00編碼。\n\n2️⃣兩碼數字：圖片編號\n👉從01開始。"
         # 文字消息2
-        reply_message_text2 = "當輸入「G1140604」\n你會得到下面這張圖片，各碼意義如下述：\n\nG: Going seventeen\n101: 2021年 Ep.14-15\n（此主題有兩集，統一編碼14）\n06:圓佑 \n01: 圓佑此集的第四張"
+        reply_message_text2 = "當輸入「G1140604」\n你會得到下面這張圖片，各碼意義如下述：\n\nG: Going seventeen\n114: 2021年 Ep.14-15\n（此主題有兩集，統一編碼14）\n06:圓佑 \n04: 圓佑此集的第四張"
         # 圖片消息
         image_url = "https://drive.google.com/uc?export=view&id=1zxVWNktotpi--y7PILjCFVoRJYpqeyI6"  # 更換為你的圖片URL
 
