@@ -97,7 +97,7 @@ def handle_message(event):
                         title='圖庫集數總覽',
                         text='已收錄集數',
                         actions=[
-                            MessageAction(text='已收錄集數'),
+                            MessageAction(text='已收錄集數')
                         ]
                     )
                     ,
