@@ -112,6 +112,10 @@ def handle_message(event):
         carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
         line_bot_api.reply_message(event.reply_token, carousel_message)
 
+    elif user_input == "抽圖/搜尋關鍵字/特定圖片":
+        reply_message = "🎲隨機圖片：\n輸入「抽」，獲得隨機圖片\n🔍搜尋圖片：\n輸入關鍵字，尋找符合的所有圖片\n📸發送圖片：\n輸入圖片編號，獲得指定圖片"
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
+
     elif user_input == str('抽'):
         
         image_urls = []
