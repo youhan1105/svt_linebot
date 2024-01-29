@@ -87,8 +87,8 @@ def handle_message(event):
             text='本機器人功能說明',
             
             actions=[
-                MessageAction(label='基礎功能：抽圖/搜尋/特定圖片', text='基礎功能'),
-                MessageAction(label='進階功能：指定成員/指定集數', text='進階功能')
+                MessageAction(label='抽圖/搜尋/特定圖片', text='抽圖/搜尋/特定圖片'),
+                MessageAction(label='指定成員/指定集數', text='指定成員/指定集數')
             ]
             )
         )
@@ -112,11 +112,11 @@ def handle_message(event):
             [page1_buttons_template_message,page2_buttons_template_message]
         )
 
-    elif user_input ==  str('基礎功能'):
+    elif user_input ==  str('抽圖/搜尋/特定圖片'):
         message = "🎲隨機圖片：\n輸入「抽」，獲得隨機圖片\n\n🔍搜尋圖片：\n輸入關鍵字，尋找符合的所有圖片\n\n📸發送圖片：\n輸入圖片編號，獲得指定圖片"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
 
-    elif user_input ==  str('進階功能'):
+    elif user_input ==  str('指定成員/指定集數'):
         message = "🍒抽指定成員：\n輸入成員各自的emoji，獲得該成員隨機圖片\n\n🔢整集列表：\n輸入「1英文+3數字」，獲得該集全部圖片之列表"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
 
