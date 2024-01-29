@@ -77,26 +77,27 @@ def handle_message(event):
         emoji.emojize("🦦"): "13",
     }
         
-if user_input == "詳細功能":
-    # 建立多頁訊息
-    page1_buttons_template_message = TemplateSendMessage(
-        alt_text='功能說明',
-        template=ButtonsTemplate(
+    if user_input == str('詳細功能'):
+        # 建立多頁訊息
+        page1_buttons_template_message = TemplateSendMessage(
+            alt_text='功能說明',
+            template=ButtonsTemplate(
             thumbnail_image_url='https://drive.google.com/uc?export=view&id=1xKML85Y5anpYatnc4yPxp6EDDxb8EHNF',
             title='功能說明',
             text='本機器人功能說明',
+            
             actions=[
                 MessageAction(label='基礎：隨機/搜尋/指定', text='🎲隨機圖片：\n輸入「抽」，獲得隨機圖片\n🔍搜尋圖片：\n輸入關鍵字，尋找符合的所有圖片\n📸發送圖片：\n輸入圖片編號，獲得指定圖片'),
                 MessageAction(label='進階：指定成員/特定集數', text='🍒抽指定成員：\n輸入成員各自的emoji，獲得該成員隨機圖片\n🔢整集列表：\n輸入「1英文+3數字」，獲得該集全部圖片之列表')
             ]
+            )
         )
-    )
 
-    # 發送多頁訊息
-    line_bot_api.reply_message(
-        event.reply_token,
-        [page1_buttons_template_message]
-    )
+        # 發送多頁訊息
+        line_bot_api.reply_message(
+            event.reply_token,
+            [page1_buttons_template_message]
+        )
 
     if user_input == str('抽'):
         
