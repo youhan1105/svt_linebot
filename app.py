@@ -120,7 +120,7 @@ def handle_message(event):
             carousel_template_message
         )
 
-    elif user_input ==  str('圖/搜尋關鍵字/特定圖片'):
+    elif user_input ==  str('抽圖/搜尋關鍵字/特定圖片'):
         message = "🎲隨機圖片：\n輸入「抽」，獲得隨機圖片\n\n🔍搜尋圖片：\n輸入關鍵字，尋找符合的所有圖片\n\n📸發送圖片：\n輸入圖片編號，獲得指定圖片"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
 
