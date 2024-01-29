@@ -84,7 +84,7 @@ def handle_message(event):
             template=CarouselTemplate(
                 columns=[
                     CarouselColumn(
-                        thumbnail_image_url='https://github.com/youhan1105/linebot-content/blob/main/image/page01.jpg',
+                        thumbnail_image_url='https://i.imgur.com/CihoDiq.jpg',
                         title='功能說明',
                         text='本機器人功能說明',
                         actions=[
