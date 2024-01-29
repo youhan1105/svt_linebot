@@ -77,46 +77,42 @@ def handle_message(event):
         emoji.emojize("🦦"): "13",
     }
         
-    if user_input == str('詳細功能'):
-        # 建立多頁訊息 - 使用 Carousel Template
-        carousel_template_message = TemplateSendMessage(
-            alt_text='功能說明',
-            template=CarouselTemplate(
-                columns=[
-                    CarouselColumn(
-                        thumbnail_image_url='https://i.imgur.com/CihoDiq.jpg',
-                        title='功能說明',
-                        text='本機器人功能說明',
-                        actions=[
-                            MessageAction(label='抽圖/搜尋關鍵字/特定圖片', text='抽圖/搜尋關鍵字/特定圖片'),
-                            MessageAction(label='指定成員/指定集數', text='指定成員/指定集數')
-                        ]
-                    ),
-                    CarouselColumn(
-                        thumbnail_image_url='https://i.imgur.com/A3XvDnd.jpg',
-                        title='圖庫集數總覽',
-                        text='已收錄集數',
-                        actions=[
-                            MessageAction(label='已收錄集數', text='已收錄集數'),
-                        ]
-                    ),
-                    CarouselColumn(
-                        thumbnail_image_url='https://i.imgur.com/ZUHsoJb.jpg',
-                        title='編碼規則',
-                        text='系列+集數+成員+編號',
-                        actions=[
-                            MessageAction(label='編碼說明', text='編碼說明'),
-                            MessageAction(label='舉例', text='舉例')
-                        ]
-                    )
-                ]
-            )
+    if user_input == "詳細功能":
+        carousel_template = CarouselTemplate(
+            columns=[
+                CarouselColumn(
+                    thumbnail_image_url="https://i.imgur.com/CihoDiq.jpg",
+                    title="功能說明",
+                    text="本機器人詳細功能說明",
+                    actions=[
+                        MessageAction(label="抽圖/搜尋關鍵字/特定圖片", text="抽圖/搜尋關鍵字/特定圖片"),
+                        MessageAction(label="抽指定成員/指定集數列表", text="抽指定成員/指定集數列表")
+                    ]
+                ),
+                CarouselColumn(
+                    thumbnail_image_url="https://i.imgur.com/A3XvDnd.jpg",
+                    title="圖庫集數總覽",
+                    text="已收錄集數清單及編號",
+                    actions=[
+                        MessageAction(label="已收錄集數", text="已收錄集數"),
+                        MessageAction(label="許願", text="許願")
+                    ]
+                ),
+                CarouselColumn(
+                    thumbnail_image_url="https://i.imgur.com/ZUHsoJb.jpg",
+                    title="編碼規則",
+                    text="系列+集數+成員+編號",
+                    actions=[
+                        MessageAction(label="編碼說明", text="編碼說明"),
+                        MessageAction(label="舉例", text="舉例")
+                    ]
+                )
+            ]
         )
+        carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
+        line_bot_api.reply_message(event.reply_token, carousel_message)
 
-        # 發送多頁訊息
-        line_bot_api.reply_message(event.reply_token,carousel_template_message)
-
-    if user_input == str('抽'):
+    elif user_input == str('抽'):
         
         image_urls = []
         
