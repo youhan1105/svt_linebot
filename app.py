@@ -92,7 +92,7 @@ def handle_message(event):
                     thumbnail_image_url="https://i.imgur.com/A3XvDnd.jpg",
                     text="已收錄集數清單及編號",
                     actions=[
-                        MessageAction(label="已收錄集數", text="已收錄集數"),
+                        MessageAction(label="已收錄集數", text="已收錄集數")
                     ]
                 ),
                 CarouselColumn(
