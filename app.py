@@ -82,7 +82,7 @@ def handle_message(event):
         page1_buttons_template_message = TemplateSendMessage(
             alt_text='功能說明',
             template=ButtonsTemplate(
-            thumbnail_image_url='https://github.com/youhan1105/linebot-content/blob/main/image/多頁-01.jpg',
+            thumbnail_image_url='https://github.com/youhan1105/linebot-content/blob/main/image/page01.jpg',
             title='功能說明',
             text='本機器人功能說明',
             
