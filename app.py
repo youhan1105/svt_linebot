@@ -78,7 +78,7 @@ def handle_message(event):
     }
         
     if user_input == str('詳細功能'):
-    # 建立多頁訊息 - 使用 Carousel Template
+        # 建立多頁訊息 - 使用 Carousel Template
         carousel_template_message = TemplateSendMessage(
             alt_text='功能說明',
             template=CarouselTemplate(
@@ -88,8 +88,25 @@ def handle_message(event):
                         title='功能說明',
                         text='本機器人功能說明',
                         actions=[
-                            MessageAction(text='抽圖/搜尋關鍵字/特定圖片'),
-                            MessageAction(text='指定成員/指定集數')
+                            MessageAction(label='抽圖/搜尋關鍵字/特定圖片', text='抽圖/搜尋關鍵字/特定圖片'),
+                            MessageAction(label='指定成員/指定集數', text='指定成員/指定集數')
+                        ]
+                    ),
+                    CarouselColumn(
+                        thumbnail_image_url='https://i.imgur.com/A3XvDnd.jpg',
+                        title='圖庫集數總覽',
+                        text='已收錄集數',
+                        actions=[
+                            MessageAction(label='已收錄集數', text='已收錄集數'),
+                        ]
+                    ),
+                    CarouselColumn(
+                        thumbnail_image_url='https://i.imgur.com/ZUHsoJb.jpg',
+                        title='編碼規則',
+                        text='系列+集數+成員+編號',
+                        actions=[
+                            MessageAction(label='編碼說明', text='編碼說明'),
+                            MessageAction(label='舉例', text='舉例')
                         ]
                     )
                 ]
@@ -97,25 +114,9 @@ def handle_message(event):
         )
 
         # 發送多頁訊息
-        line_bot_api.reply_message(event.reply_token, carousel_template_message)
+        line_bot_api.reply_message(event.reply_token,carousel_template_message)
 
-    elif user_input ==  str('圖/搜尋關鍵字/特定圖片'):
-        message = "🎲隨機圖片：\n輸入「抽」，獲得隨機圖片\n\n🔍搜尋圖片：\n輸入關鍵字，尋找符合的所有圖片\n\n📸發送圖片：\n輸入圖片編號，獲得指定圖片"
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
-
-    elif user_input ==  str('指定成員/指定集數'):
-        message = "🍒抽指定成員：\n輸入成員各自的emoji，獲得該成員隨機圖片\n\n🔢整集列表：\n輸入「1英文+3數字」，獲得該集全部圖片之列表"
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
-
-    elif user_input ==  str('編碼說明'):
-        message = "🔠首位英文：頻道與系列\n\n👉例：G為going seventeen，S為Special特輯。以官方頻道為準，詳情參考「圖庫集數總覽」。\n\n3️⃣三碼數字：年份與集數\n👉Going系列，首位數字為年份，後兩碼為集數。若有上下兩集，統一以第一集編碼。\n👉其他系列從001開始。\n\n2️⃣兩碼數字：成員編號\n👉01～13。\n👉若有兩位以上成員，以00編碼。\n\n2️⃣兩碼數字：圖片編號\n👉從01開始。"
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
-
-    elif user_input ==  str('舉例'):
-        message = "輸入「G1010901」\n你會得到下面這張圖片，且各碼意義如下述：\n\nG: Going seventeen\n101: 2021年 Ep.01-02（此主題有兩集，統一編碼01）\n09: 珉奎\n01: 珉奎此集的第一張"
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
-
-    elif user_input == str('抽'):
+    if user_input == str('抽'):
         
         image_urls = []
         
