@@ -82,7 +82,7 @@ def handle_message(event):
         page1_buttons_template_message = TemplateSendMessage(
             alt_text='功能說明',
             template=ButtonsTemplate(
-            thumbnail_image_url='https://drive.google.com/uc?export=view&id=1xKML85Y5anpYatnc4yPxp6EDDxb8EHNF',
+            thumbnail_image_url='https://github.com/youhan1105/linebot-content/blob/main/image/多頁-01.jpg',
             title='功能說明',
             text='本機器人功能說明',
             
@@ -96,7 +96,7 @@ def handle_message(event):
         page2_buttons_template_message = TemplateSendMessage(
             alt_text='編碼規則',
             template=ButtonsTemplate(
-            thumbnail_image_url='https://example.com/page2.jpg',
+            thumbnail_image_url='https://github.com/youhan1105/linebot-content/blob/main/image/多頁-02.jpg',
             title='編碼規則',
             text='系列+集數+成員+編號',
             actions=[
