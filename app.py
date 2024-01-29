@@ -91,24 +91,6 @@ def handle_message(event):
                             MessageAction(text='抽圖/搜尋關鍵字/特定圖片'),
                             MessageAction(text='指定成員/指定集數')
                         ]
-                    ),
-                    CarouselColumn(
-                        thumbnail_image_url='https://i.imgur.com/A3XvDnd.jpg',
-                        title='圖庫集數總覽',
-                        text='已收錄集數',
-                        actions=[
-                            MessageAction(text='已收錄集數'),
-                            MessageAction(text='集數列表')
-                        ]
-                    ),
-                    CarouselColumn(
-                        thumbnail_image_url='https://i.imgur.com/ZUHsoJb.jpg',
-                        title='編碼規則',
-                        text='系列+集數+成員+編號',
-                        actions=[
-                            MessageAction(text='編碼說明'),
-                            MessageAction(text='舉例')
-                        ]
                     )
                 ]
             )
