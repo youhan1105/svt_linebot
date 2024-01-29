@@ -82,7 +82,6 @@ def handle_message(event):
             columns=[
                 CarouselColumn(
                     thumbnail_image_url="https://i.imgur.com/CihoDiq.jpg",
-                    title="功能說明",
                     text="本機器人詳細功能說明",
                     actions=[
                         MessageAction(label="抽圖/搜尋關鍵字/特定圖片", text="抽圖/搜尋關鍵字/特定圖片"),
@@ -91,16 +90,13 @@ def handle_message(event):
                 ),
                 CarouselColumn(
                     thumbnail_image_url="https://i.imgur.com/A3XvDnd.jpg",
-                    title="圖庫集數總覽",
                     text="已收錄集數清單及編號",
                     actions=[
                         MessageAction(label="已收錄集數", text="已收錄集數"),
-                        MessageAction(label="許願", text="許願")
                     ]
                 ),
                 CarouselColumn(
                     thumbnail_image_url="https://i.imgur.com/ZUHsoJb.jpg",
-                    title="編碼規則",
                     text="系列+集數+成員+編號",
                     actions=[
                         MessageAction(label="編碼說明", text="編碼說明"),
@@ -113,7 +109,11 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, carousel_message)
 
     elif user_input == "抽圖/搜尋關鍵字/特定圖片":
-        reply_message = "🎲隨機圖片：\n輸入「抽」，獲得隨機圖片\n🔍搜尋圖片：\n輸入關鍵字，尋找符合的所有圖片\n📸發送圖片：\n輸入圖片編號，獲得指定圖片"
+        reply_message = "🎲隨機圖片：\n輸入「抽」，獲得隨機圖片\n\n🔍搜尋圖片：\n輸入關鍵字，尋找符合的所有圖片\n\n📸發送圖片：\n輸入圖片編號，獲得指定圖片"
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
+
+    elif user_input == "抽指定成員/指定集數列表":
+        reply_message = "🍒抽指定成員：\n輸入成員各自的emoji，獲得該成員隨機圖片\n\n🔢整集列表：\n輸入「1英文+3數字」，獲得該集全部圖片之列表"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
 
     elif user_input == str('抽'):
