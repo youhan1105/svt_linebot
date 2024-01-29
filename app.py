@@ -95,7 +95,7 @@ def handle_message(event):
                     CarouselColumn(
                         thumbnail_image_url='https://i.imgur.com/A3XvDnd.jpg',
                         title='圖庫集數總覽',
-                        text='已收錄集數'
+                        text='已收錄集數',
                         actions=[
                             MessageAction(text='已收錄集數'),
                         ]
