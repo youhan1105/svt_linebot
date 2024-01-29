@@ -88,12 +88,21 @@ def handle_message(event):
                         title='功能說明',
                         text='本機器人功能說明',
                         actions=[
-                            MessageAction(label='抽圖/搜尋關鍵字/特定圖片', text='圖/搜尋關鍵字/特定圖片'),
-                            MessageAction(label='指定成員/指定集數', text='指定成員/指定集數')
+                            MessageAction(text='抽圖/搜尋關鍵字/特定圖片'),
+                            MessageAction(text='指定成員/指定集數')
                         ]
                     ),
                     CarouselColumn(
-                        thumbnail_image_url='https://example.com/page2.jpg',
+                        thumbnail_image_url='https://i.imgur.com/A3XvDnd.jpg',
+                        title='圖庫集數總覽',
+                        text='已收錄集數'
+                        actions=[
+                            MessageAction(text='已收錄集數'),
+                        ]
+                    )
+                    ,
+                    CarouselColumn(
+                        thumbnail_image_url='https://i.imgur.com/ZUHsoJb.jpg',
                         title='編碼規則',
                         text='系列+集數+成員+編號',
                         actions=[
