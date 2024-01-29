@@ -115,7 +115,7 @@ def handle_message(event):
         reply_message2 = "當輸入「G1140604」\n你會得到下面這張圖片，各碼意義如下述：\n\nG: Going seventeen\n101: 2021年 Ep.14-15\n（此主題有兩集，統一編碼14）\n06:圓佑 \n01: 圓佑此集的第四張"
         image_urls = "https://drive.google.com/uc?export=view&id=1zxVWNktotpi--y7PILjCFVoRJYpqeyI6"
         image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message,reply_message2,image_messages))
+        line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=reply_message), reply_message2, *image_messages])
 
     elif user_input == str('抽'):
         
