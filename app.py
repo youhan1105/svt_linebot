@@ -113,10 +113,9 @@ def handle_message(event):
     elif user_input == "編碼說明":
         reply_message = "編碼：1英文+7數字\n『系列+集數+成員+編號』\n\n🔠首位英文：頻道與系列\n👉G為going seventeen，S為Special特輯。以官方頻道為準，詳情參考「圖庫集數總覽」。\n\n3️⃣三碼數字：年份與集數\n👉Going系列，首位數字為年份，後兩碼為集數。若有上下兩集，以上集編碼。\n👉其他系列從001開始。\n\n2️⃣兩碼數字：成員編號\n👉01～13。\n\n👉若有兩位以上成員，以00編碼。\n\n2️⃣兩碼數字：圖片編號\n👉從01開始。"
         reply_message2 = "當輸入「G1140604」\n你會得到下面這張圖片，各碼意義如下述：\n\nG: Going seventeen\n101: 2021年 Ep.14-15\n（此主題有兩集，統一編碼14）\n06:圓佑 \n01: 圓佑此集的第四張"
-	image_urls = "https://drive.google.com/uc?export=view&id=1zxVWNktotpi--y7PILjCFVoRJYpqeyI6"
-	image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
-	
-	line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message,reply_message2,image_messages))
+        image_urls = "https://drive.google.com/uc?export=view&id=1zxVWNktotpi--y7PILjCFVoRJYpqeyI6"
+        image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message,reply_message2,image_messages))
 
     elif user_input == str('抽'):
         
