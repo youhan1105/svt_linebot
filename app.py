@@ -1,6 +1,6 @@
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
-from linebot.models import MessageEvent, TextMessage,TextSendMessage, ImageSendMessage, QuickReply, QuickReplyButton, MessageAction
+from linebot.models import MessageEvent, TextMessage,TextSendMessage, ImageSendMessage, QuickReply, QuickReplyButton, MessageAction, TemplateSendMessage, ButtonsTemplate
 from linebot.exceptions import InvalidSignatureError
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -99,7 +99,7 @@ def handle_message(event):
             [page1_buttons_template_message]
         )
 
-    if user_input == str('抽'):
+    elif user_input == str('抽'):
         
         image_urls = []
         
