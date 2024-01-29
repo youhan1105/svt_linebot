@@ -109,7 +109,7 @@ def handle_message(event):
         # 發送多頁訊息
         line_bot_api.reply_message(
             event.reply_token,
-            [page1_buttons_template_message]
+            [page1_buttons_template_message,page2_buttons_template_message]
         )
 
     elif user_input ==  str('基礎功能'):
