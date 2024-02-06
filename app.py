@@ -48,7 +48,7 @@ data = sheet.get_all_records() # 取得 Google Sheets 所有資料
 #主程式 
 @handler.add(MessageEvent, message=TextMessage) #處理收到的訊息事件
 def handle_message(event):
-    print("使用者 ID:", event.event.source.user_id)
+    print("使用者 ID:", event.source.user_id)
     global current_row_index
     user_input = event.message.text
 
