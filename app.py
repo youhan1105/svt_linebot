@@ -9,6 +9,9 @@ import re
 import emoji
 import json
 
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gs_credentials.json"
+
+
 app = Flask(__name__)
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
