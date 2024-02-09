@@ -1,14 +1,13 @@
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
-from linebot.models import MessageEvent, TextMessage,TextSendMessage, ImageSendMessage, QuickReply, QuickReplyButton, MessageAction, TemplateSendMessage, CarouselTemplate, CarouselColumn, URIAction
+from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageSendMessage, QuickReply, QuickReplyButton, MessageAction, TemplateSendMessage, CarouselTemplate, CarouselColumn, URIAction
 from linebot.exceptions import InvalidSignatureError
-from oauth2client.service_account import ServiceAccountCredentials
-
-import gspread
+from google.cloud import storage
 import os
 import random
 import re
 import emoji
+import json
 
 app = Flask(__name__)
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
@@ -19,12 +18,15 @@ line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
 #endregion
 
-#region #Googlesheet串接
-scope = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
-creditials = ServiceAccountCredentials.from_json_keyfile_name('gs_credentials.json', scopes=scope)
-client = gspread.authorize(creditials)
-sheet = client.open("SVT-linebot").sheet1
-#endregion
+
+# Google Cloud Storage 設定
+storage_client = storage.Client()
+bucket_name = 'line-carat-hey-image'
+blob_name = 'Database/svt-data-0210.json'
+bucket = storage_client.bucket(bucket_name)
+blob = bucket.blob(blob_name)
+json_data = json.loads(blob.download_as_string())
+
 
 #region #處理 Line Bot Webhook
 @app.route("/callback", methods=['POST'])
@@ -43,7 +45,7 @@ def callback():
 global current_row_index
 current_row_index = None
 data = None
-data = sheet.get_all_records() 
+data = json_data 
 #endregion
 
 
