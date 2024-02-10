@@ -11,7 +11,6 @@ import json
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gs_credentials.json"
 
-
 app = Flask(__name__)
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
@@ -21,15 +20,25 @@ line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
 #endregion
 
-
-# Google Cloud Storage 設定
+#region # Google Cloud Storage 設定
 storage_client = storage.Client()
 bucket_name = 'line-carat-hey-image'
 blob_name = 'Database/svt-data-0210.json'
 bucket = storage_client.bucket(bucket_name)
 blob = bucket.blob(blob_name)
 json_data = json.loads(blob.download_as_string())
+#endregion
 
+#region #全域變數用於追蹤已發送圖片的索引
+global current_row_index
+current_row_index = None
+new_image_index = 0
+data = None
+data = json_data 
+#endregion
+
+# 用戶圖片索引字典
+user_image_index = {}
 
 #region #處理 Line Bot Webhook
 @app.route("/callback", methods=['POST'])
@@ -44,17 +53,15 @@ def callback():
     return 'OK'
 #endregion
 
-#region #全域變數用於追蹤已發送圖片的索引
-global current_row_index
-current_row_index = None
-data = None
-data = json_data 
-#endregion
-
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     global current_row_index
+    user_id = event.source.user_id
+
+    if user_id not in user_image_index:
+        user_image_index[user_id] = None
+
     user_input = event.message.text
 
     emoji_mapping = {
@@ -322,6 +329,7 @@ def handle_message(event):
             reply_message = "無符合的資料"
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
 
+    user_image_index[user_id] = new_image_index
 
 if __name__ == "__main__":
     app.run()
