@@ -154,7 +154,7 @@ def handle_message(event):
         image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
     
         quick_reply_items = [
-            #QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
+            QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
             QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
             QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
             QuickReplyButton(action=MessageAction(label='抽', text='抽'))
