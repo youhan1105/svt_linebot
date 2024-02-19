@@ -82,6 +82,7 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    global json_data  # 將 json_data 定義為全局變量
     user_id = event.source.user_id
     current_row_index = get_user_image_index(user_id)
 
