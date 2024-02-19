@@ -25,7 +25,7 @@ handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
 #endregion
 
 # 從 GitHub 讀取 JSON 檔案
-github_json_url = 'https://raw.githubusercontent.com/youhan1105/svt_linebot/main/database.json'
+github_json_url = 'https://raw.githubusercontent.com/youhan1105/svt_linebot/main/database.json?token=GHSAT0AAAAAACOAYKFUAOE4BVAOZYG7NDVOZOTX2BQ'
 response = requests.get(github_json_url)
 
 if response.status_code == 200:
