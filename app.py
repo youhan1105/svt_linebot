@@ -23,7 +23,7 @@ handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
 #region # Google Cloud Storage 設定
 storage_client = storage.Client()
 bucket_name = 'line-carat-hey-image'
-blob_name = 'Database/svt-data-0212-2.json'
+blob_name = 'Database/svt-data-0219.json'
 bucket = storage_client.bucket(bucket_name)
 blob = bucket.blob(blob_name)
 json_data = json.loads(blob.download_as_string())
