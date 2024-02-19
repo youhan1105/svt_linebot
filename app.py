@@ -38,11 +38,10 @@ response = requests.get(github_raw_url , headers=headers)
 # 檢查響應狀態碼
 if response.status_code == 200:
     # 請求成功，處理響應數據
-    repository_data = response.json()
-    print(repository_data)
+    json_data = response.json()
 else:
     # 請求失敗，打印錯誤信息
-    print('Failed to fetch repository data. Status code:', response.status_code)
+    print('無法取得json資料')
 
 
 #region # firebase金鑰
