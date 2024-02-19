@@ -33,7 +33,7 @@ headers = {
 }
 
 # 發送 GET 請求來獲取存儲庫信息
-response = requests.get(repository_url, headers=headers)
+response = requests.get(github_raw_url , headers=headers)
 
 # 檢查響應狀態碼
 if response.status_code == 200:
