@@ -21,18 +21,15 @@ line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
 #endregion
 
+json_data = None
 
 # 發送 GET 請求來取得 JSON 資料
 github_raw_url = 'https://github.com/youhan1105/svt_linebot/blob/main/database.json'
 personal_access_token = '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'
-
-# 設置請求標頭，包括個人訪問令牌
 headers = {
     'Authorization': 'token ' + personal_access_token,
-    'Accept': 'application/vnd.github.v3+json'  # 告訴 GitHub 使用 v3 版本的 API
+    'Accept': 'application/vnd.github.v3+json'
 }
-
-# 發送 GET 請求來獲取存儲庫信息
 response = requests.get(github_raw_url , headers=headers)
 
 # 檢查響應狀態碼
