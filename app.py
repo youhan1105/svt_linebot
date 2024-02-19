@@ -12,32 +12,23 @@ import json
 import firebase_admin
 from firebase_admin import credentials, db
 
-cred = credentials.Certificate("test-e2b8b-firebase-adminsdk-3hmyz-0b6d8668b4.json")
-firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://test-e2b8b-default-rtdb.asia-southeast1.firebasedatabase.app/'
-})
 
 app = Flask(__name__)
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
-#region # 從 GitHub 讀取 JSON 檔案
-github_json_url = 'https://raw.githubusercontent.com/youhan1105/svt_linebot/main/database.json?token=GHSAT0AAAAAACOAYKFUAOE4BVAOZYG7NDVOZOTX2BQ'
-response = requests.get(github_json_url)
 
-if response.status_code == 200:
-    json_string = response.text  # 從回應中獲取 JSON 字串
-    json_data = json.loads(json_string)  # 使用 json.loads() 函數解析 JSON 字串
-else:
-    print("Failed to fetch JSON data from GitHub.")
-    json_data = None
-#endregion
-    
+cred = credentials.Certificate("test-e2b8b-firebase-adminsdk-3hmyz-0b6d8668b4.json")
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://test-e2b8b-default-rtdb.asia-southeast1.firebasedatabase.app/'
+})
+ref = db.reference('https://test-e2b8b-default-rtdb.asia-southeast1.firebasedatabase.app/')
+data=ref.get()
+
 #region #全域變數用於追蹤已發送圖片的索引
 global current_row_index
 current_row_index = None
 new_image_index = 0
 data = None
-data = json_data 
 #endregion
 
 # 用戶圖片索引字典
