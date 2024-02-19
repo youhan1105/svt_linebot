@@ -38,7 +38,7 @@ global current_row_index
 current_row_index = None
 new_image_index = 0
 data = None
-data = json_data 
+data = sheet.get_all_records() 
 #endregion
 
 # 用戶圖片索引字典
