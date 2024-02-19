@@ -23,7 +23,7 @@ handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
 
 
 # 發送 GET 請求來取得 JSON 資料
-github_raw_url = 'https://raw.githubusercontent.com/your_username/your_repository/your_branch/database.json'
+github_raw_url = 'https://github.com/youhan1105/svt_linebot/blob/main/database.json'
 response = requests.get(github_raw_url)
 
 # 檢查是否成功取得資料
