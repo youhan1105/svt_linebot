@@ -24,14 +24,25 @@ handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
 
 # 發送 GET 請求來取得 JSON 資料
 github_raw_url = 'https://github.com/youhan1105/svt_linebot/blob/main/database.json'
-response = requests.get(github_raw_url)
+personal_access_token = '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'
 
-# 檢查是否成功取得資料
+# 設置請求標頭，包括個人訪問令牌
+headers = {
+    'Authorization': 'token ' + personal_access_token,
+    'Accept': 'application/vnd.github.v3+json'  # 告訴 GitHub 使用 v3 版本的 API
+}
+
+# 發送 GET 請求來獲取存儲庫信息
+response = requests.get(repository_url, headers=headers)
+
+# 檢查響應狀態碼
 if response.status_code == 200:
-    # 將 JSON 資料解析為 Python 字典或列表
-    json_data = response.json()
+    # 請求成功，處理響應數據
+    repository_data = response.json()
+    print(repository_data)
 else:
-    print('無法取得 JSON 資料。')
+    # 請求失敗，打印錯誤信息
+    print('Failed to fetch repository data. Status code:', response.status_code)
 
 
 #region # firebase金鑰
