@@ -29,7 +29,8 @@ github_json_url = 'https://raw.githubusercontent.com/youhan1105/svt_linebot/main
 response = requests.get(github_json_url)
 
 if response.status_code == 200:
-    json_data = response.json()
+    json_string = response.text  # 從回應中獲取 JSON 字串
+    json_data = json.loads(json_string)  # 使用 json.loads() 函數解析 JSON 字串
 else:
     print("Failed to fetch JSON data from GitHub.")
     json_data = None
