@@ -2,18 +2,14 @@ from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageSendMessage, QuickReply, QuickReplyButton, MessageAction, TemplateSendMessage, CarouselTemplate, CarouselColumn, URIAction
 from linebot.exceptions import InvalidSignatureError
-from oauth2client.service_account import ServiceAccountCredentials
 from google.cloud import storage
-import gspread
 import os
 import random
 import re
 import emoji
-import requests
 import json
-import firebase_admin
-from firebase_admin import credentials, db
 
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gs_credentials.json"
 
 app = Flask(__name__)
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
@@ -24,11 +20,13 @@ line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
 #endregion
 
-#region #Googlesheet串接
-scope = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
-creditials = ServiceAccountCredentials.from_json_keyfile_name('gs_credentials.json', scopes=scope)
-client = gspread.authorize(creditials)
-sheet = client.open("First sheet").sheet1
+#region # Google Cloud Storage 設定
+storage_client = storage.Client()
+bucket_name = 'line-carat-hey-image'
+blob_name = 'Database/svt-data-0210.json'
+bucket = storage_client.bucket(bucket_name)
+blob = bucket.blob(blob_name)
+json_data = json.loads(blob.download_as_string())
 #endregion
 
 #region #全域變數用於追蹤已發送圖片的索引
@@ -36,12 +34,11 @@ global current_row_index
 current_row_index = None
 new_image_index = 0
 data = None
-data = sheet.get_all_records() 
+data = json_data 
 #endregion
 
 # 用戶圖片索引字典
 user_image_index = {}
-new_image_index = None
 
 #region #處理 Line Bot Webhook
 @app.route("/callback", methods=['POST'])
@@ -56,11 +53,13 @@ def callback():
     return 'OK'
 #endregion
 
+
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     global current_row_index
-    global new_image_index
     user_id = event.source.user_id
+
+    print("User ID:", user_id, "Current Row Index:", current_row_index)
 
     if user_id not in user_image_index:
         user_image_index[user_id] = None
@@ -95,7 +94,6 @@ def handle_message(event):
         emoji.emojize("🎧"): "12",
         emoji.emojize("🦖"): "13",
         emoji.emojize("🦦"): "13",
-        emoji.emojize("💰"): str("工作"),
     }
         
     if user_input == str("完整功能"):
@@ -148,16 +146,18 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, carousel_message)
 
     elif user_input == str('抽'):
-        user_id = event.source.user_id
+        
         image_urls = []
+        
+    
         random_row = random.choice(data)  
         image_urls = random_row.get('圖片網址')  
-        current_row_index = data.index(random_row) 
-        new_image_index = current_row_index
+        current_row_index = data.index(random_row)        
         image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
+        
     
         quick_reply_items = [
-            QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
+            #QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
             QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
             QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
             QuickReplyButton(action=MessageAction(label='抽', text='抽'))
@@ -168,101 +168,67 @@ def handle_message(event):
 
         line_bot_api.reply_message(event.reply_token, image_messages)
 
-    elif user_input == str('取得編號'):
-        user_id = event.source.user_id
-        if user_id in user_image_index:
-            current_row_index = user_image_index[user_id]
-            if current_row_index is not None:
-                if current_row_index < len(data):
-                    current_row = data[current_row_index]
-                    image_number = current_row.get('編號')
-                    image_name = current_row.get('中字')
-
-                    quick_reply_items = [
-                        QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
-                        QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
-                        QuickReplyButton(action=MessageAction(label='抽', text='抽'))
-                    ]
-                    quick_reply = QuickReply(items=quick_reply_items)
-
-                    # 建立回覆訊息，包含 Quick Reply 按鈕
-                    text_message = TextSendMessage(text=f"圖片編號為：\n【{image_number}】{image_name}", quick_reply=quick_reply)
-
-        
-                    line_bot_api.reply_message(event.reply_token, text_message)
-        else:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text="請先抽圖片"))
-
     elif user_input == str("下一張"):
-        user_id = event.source.user_id
-        if user_id in user_image_index:
-            current_row_index = user_image_index[user_id]
-            if current_row_index is not None:
-                current_row_index += 1
-
-                if current_row_index < len(data):
-                    next_row = data[current_row_index]
-                    next_image_urls = next_row.get('圖片網址')     
-                    current_row_index = data.index(next_row) 
-                    new_image_index = current_row_index
-                    next_image_messages = [ImageSendMessage(original_content_url=next_image_urls, preview_image_url=next_image_urls)]
+        if current_row_index is not None:
+            current_row_index += 1
+            print("User ID:", user_id, "Next Row Index:", current_row_index)
+            if current_row_index < len(data):
+                next_row = data[current_row_index]
+                next_image_urls = next_row.get('圖片網址')     
+                current_row_index = data.index(next_row)   
+                next_image_messages = [ImageSendMessage(original_content_url=next_image_urls, preview_image_url=next_image_urls)]
             
-                    quick_reply_items = [
-                        QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
-                        QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
-                        QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
-                        QuickReplyButton(action=MessageAction(label='抽', text='抽'))
-                    ]
-                    quick_reply = QuickReply(items=quick_reply_items)
+                quick_reply_items = [
+                    #QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
+                    QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
+                    QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
+                    QuickReplyButton(action=MessageAction(label='抽', text='抽'))
+                ]
+                quick_reply = QuickReply(items=quick_reply_items)
 
-                    for next_image_message in next_image_messages:
-                        next_image_message.quick_reply = quick_reply
+                for next_image_message in next_image_messages:
+                    next_image_message.quick_reply = quick_reply
 
-                    line_bot_api.reply_message(event.reply_token, next_image_messages)
+                line_bot_api.reply_message(event.reply_token, next_image_messages)
 
-                else:
+            else:
 
-                    quick_reply_items = [
-                        QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
-                        QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
-                        QuickReplyButton(action=MessageAction(label='抽', text='抽'))
-                    ]
-                    quick_reply = QuickReply(items=quick_reply_items)
-                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text="已經是最後一張圖片了"))
+                quick_reply_items = [
+                    #QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
+                    QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
+                    QuickReplyButton(action=MessageAction(label='抽', text='抽'))
+                ]
+                quick_reply = QuickReply(items=quick_reply_items)
+                line_bot_api.reply_message(event.reply_token, TextSendMessage(text="已經是最後一張圖片了"))
 
     elif user_input == str("上一張"):
-        user_id = event.source.user_id
-        if user_id in user_image_index:
-            current_row_index = user_image_index[user_id]
-            if current_row_index is not None:
-                current_row_index -= 1
+        if current_row_index is not None:
+            current_row_index -= 1
+            if current_row_index >= 0:
+                previous_row = data[current_row_index]
+                previous_image_urls = previous_row.get('圖片網址')
+                current_row_index = data.index(previous_row) 
+                previous_image_messages = [ImageSendMessage(original_content_url=previous_image_urls, preview_image_url=previous_image_urls)]
+            
+                quick_reply_items = [
+                    #QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
+                    QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
+                    QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
+                    QuickReplyButton(action=MessageAction(label='抽', text='抽'))
+                ]
+                quick_reply = QuickReply(items=quick_reply_items)
 
-                if current_row_index >= 0:
-                    previous_row = data[current_row_index]
-                    previous_image_urls = previous_row.get('圖片網址')
-                    current_row_index = data.index(previous_row) 
-                    new_image_index = current_row_index
-                    previous_image_messages = [ImageSendMessage(original_content_url=previous_image_urls, preview_image_url=previous_image_urls)]
+                for previous_image_message in previous_image_messages:
+                    previous_image_message.quick_reply = quick_reply            
             
-                    quick_reply_items = [
-                        QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
-                        QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
-                        QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
-                        QuickReplyButton(action=MessageAction(label='抽', text='抽'))
-                    ]
-                    quick_reply = QuickReply(items=quick_reply_items)
-
-                    for previous_image_message in previous_image_messages:
-                        previous_image_message.quick_reply = quick_reply            
+                line_bot_api.reply_message(event.reply_token, previous_image_messages)
             
-                    line_bot_api.reply_message(event.reply_token, previous_image_messages)
-            
-                else:
-                    quick_reply_items = [
-                        QuickReplyButton(action=MessageAction(label='抽', text='抽'))
-                    ]
-                    quick_reply = QuickReply(items=quick_reply_items)
-                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text="已經是第一張圖片了"))
+            else:
+                quick_reply_items = [
+                    QuickReplyButton(action=MessageAction(label='抽', text='抽'))
+                ]
+                quick_reply = QuickReply(items=quick_reply_items)
+                line_bot_api.reply_message(event.reply_token, TextSendMessage(text="已經是第一張圖片了"))
 
     elif re.match(r'^[A-Za-z]', user_input) and len(user_input) == 8:  # 檢查是否為八字元且為英文開頭
         image_urls = []
@@ -275,13 +241,9 @@ def handle_message(event):
 
 		# 如果找到符合的圖片網址		   
         if image_urls:  
-
-            user_id = event.source.user_id
-            user_image_index[user_id] = current_row_index
-
             image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in image_urls]
             quick_reply_items = [
-                QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
+                #QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
                 QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
                 QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
                 QuickReplyButton(action=MessageAction(label='抽', text='抽'))
@@ -292,7 +254,6 @@ def handle_message(event):
                 image_message.quick_reply = quick_reply
             
             line_bot_api.reply_message(event.reply_token, image_messages)
-            new_image_index = current_row_index
         
     
         else:  
@@ -316,7 +277,7 @@ def handle_message(event):
     elif user_input in emoji_mapping: # 抽emoji
         search_condition = emoji.emojize(emoji_mapping[user_input])
 
-        # 搜尋欄位內容為搜尋條件的橫列
+        # 搜尋 google sheet 中 "成員" 欄位內容為搜尋條件的橫列
         matched_data = []
         image_urls = []
         for row in data:
@@ -328,30 +289,17 @@ def handle_message(event):
                 # 如果 "成員" 欄位的值不可迭代，將其轉換為字符串再進行比較
                 if str(search_condition) == str(row[str('成員')]):
                     matched_data.append(row)
-        for row in data:
-           # 檢查 "成員" 欄位的值是否可迭代
-            if hasattr(row[str('主題')], '__iter__'):
-                if str(search_condition) in row[str('主題')]:
-                    matched_data.append(row)
-            else:
-                # 如果 "成員" 欄位的值不可迭代，將其轉換為字符串再進行比較
-                if str(search_condition) == str(row[str('主題')]):
-                    matched_data.append(row)
-
 
         if matched_data:
             # 隨機選擇一列資料
             random_row = random.choice(matched_data)
             image_urls = random_row.get('圖片網址') 
             current_row_index = data.index(random_row)
-
-            user_id = event.source.user_id
-            user_image_index[user_id] = current_row_index
-
             image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
 
+        # 製作按鈕
             quick_reply_items = [
-                QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
+                #QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
                 QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
                 QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
                 QuickReplyButton(action=MessageAction(label='抽', text='抽')),
@@ -364,7 +312,6 @@ def handle_message(event):
                 image_message.quick_reply = quick_reply
 
             line_bot_api.reply_message(event.reply_token, image_messages)
-            new_image_index = current_row_index
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合條件的emoji"))
 
