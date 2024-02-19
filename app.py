@@ -2,6 +2,9 @@ from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageSendMessage, QuickReply, QuickReplyButton, MessageAction, TemplateSendMessage, CarouselTemplate, CarouselColumn, URIAction
 from linebot.exceptions import InvalidSignatureError
+from oauth2client.service_account import ServiceAccountCredentials
+
+import gspread
 from google.cloud import storage
 import os
 import random
@@ -20,13 +23,11 @@ line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
 #endregion
 
-#region # Google Cloud Storage 設定
-storage_client = storage.Client()
-bucket_name = 'line-carat-hey-image'
-blob_name = 'Database/svt-data-0210.json'
-bucket = storage_client.bucket(bucket_name)
-blob = bucket.blob(blob_name)
-json_data = json.loads(blob.download_as_string())
+#region #Googlesheet串接
+scope = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
+creditials = ServiceAccountCredentials.from_json_keyfile_name('gs_credentials.json', scopes=scope)
+client = gspread.authorize(creditials)
+sheet = client.open("First sheet").sheet1
 #endregion
 
 #region #全域變數用於追蹤已發送圖片的索引
@@ -34,7 +35,7 @@ global current_row_index
 current_row_index = None
 new_image_index = 0
 data = None
-data = json_data 
+data = sheet.get_all_records()
 #endregion
 
 # 用戶圖片索引字典
