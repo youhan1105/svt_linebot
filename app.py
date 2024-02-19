@@ -9,6 +9,7 @@ import re
 import emoji
 import json
 import firebase_admin
+import requests
 from firebase_admin import credentials, db
 
 app = Flask(__name__)
@@ -20,15 +21,18 @@ line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
 #endregion
 
-#region # Google Cloud Storage 設定
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gs_credentials.json"
-storage_client = storage.Client()
-bucket_name = 'line-carat-hey-image'
-blob_name = 'Database/svt-data-0219.json'
-bucket = storage_client.bucket(bucket_name)
-blob = bucket.blob(blob_name)
-json_data = json.loads(blob.download_as_string())
-#endregion
+
+# 發送 GET 請求來取得 JSON 資料
+github_raw_url = 'https://raw.githubusercontent.com/your_username/your_repository/your_branch/database.json'
+response = requests.get(github_raw_url)
+
+# 檢查是否成功取得資料
+if response.status_code == 200:
+    # 將 JSON 資料解析為 Python 字典或列表
+    json_data = response.json()
+else:
+    print('無法取得 JSON 資料。')
+
 
 #region # firebase金鑰
 cred = credentials.Certificate("test-e2b8b-firebase-adminsdk-3hmyz-0b6d8668b4.json")
