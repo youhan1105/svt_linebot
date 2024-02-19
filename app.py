@@ -32,13 +32,11 @@ headers = {
 }
 response = requests.get(github_raw_url , headers=headers)
 
-# 檢查響應狀態碼
 if response.status_code == 200:
-    # 請求成功，處理響應數據
     json_data = response.json()
 else:
-    # 請求失敗，打印錯誤信息
     print('無法取得json資料')
+    json_data = [] 
 
 
 #region # firebase金鑰
