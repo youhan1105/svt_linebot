@@ -12,19 +12,15 @@ import json
 import firebase_admin
 from firebase_admin import credentials, db
 
-
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gs_credentials.json"
+cred = credentials.Certificate("test-e2b8b-firebase-adminsdk-3hmyz-0b6d8668b4.json")
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://test-e2b8b-default-rtdb.asia-southeast1.firebasedatabase.app/'
+})
 
 app = Flask(__name__)
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
-#region #Linebot設定 
-channel_access_token = 'mCJ2+jdUUJZ7gvYlTbhHFcs9MPyXn16iV/67s376Fif/XG5a4Mo++0mkcwn2opdG5ExcAcgygV67cGfvBaMO4+sKIyjkuehgmIK1UsZX1CDTZ1FhFjREv4Nr9Mt0Hh6EJ8yDYxrI2stTMfvgDbDnxwdB04t89/1O/w1cDnyilFU='
-line_bot_api = LineBotApi(channel_access_token)
-handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
-#endregion
-
-# 從 GitHub 讀取 JSON 檔案
+#region # 從 GitHub 讀取 JSON 檔案
 github_json_url = 'https://raw.githubusercontent.com/youhan1105/svt_linebot/main/database.json?token=GHSAT0AAAAAACOAYKFUAOE4BVAOZYG7NDVOZOTX2BQ'
 response = requests.get(github_json_url)
 
@@ -34,12 +30,8 @@ if response.status_code == 200:
 else:
     print("Failed to fetch JSON data from GitHub.")
     json_data = None
-
-# firebase金鑰
-cred = credentials.Certificate("test-e2b8b-firebase-adminsdk-3hmyz-0b6d8668b4.json")
-firebase_admin.initialize_app(cred, {'databaseURL': 'https://test-e2b8b.firebaseio.com/'})
-
-
+#endregion
+    
 #region #全域變數用於追蹤已發送圖片的索引
 global current_row_index
 current_row_index = None
@@ -51,6 +43,12 @@ data = json_data
 # 用戶圖片索引字典
 user_image_index = {}
 new_image_index = None
+
+#region #Linebot設定 
+channel_access_token = 'mCJ2+jdUUJZ7gvYlTbhHFcs9MPyXn16iV/67s376Fif/XG5a4Mo++0mkcwn2opdG5ExcAcgygV67cGfvBaMO4+sKIyjkuehgmIK1UsZX1CDTZ1FhFjREv4Nr9Mt0Hh6EJ8yDYxrI2stTMfvgDbDnxwdB04t89/1O/w1cDnyilFU='
+line_bot_api = LineBotApi(channel_access_token)
+handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
+#endregion
 
 #region #處理 Line Bot Webhook
 @app.route("/callback", methods=['POST'])
@@ -70,6 +68,8 @@ def handle_message(event):
     global current_row_index
     global new_image_index
     user_id = event.source.user_id
+
+    ref = db.reference('user_index')
 
     if user_id not in user_image_index:
         user_image_index[user_id] = None
@@ -395,6 +395,7 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
 
     user_image_index[user_id] = new_image_index
+    ref.child(user_id).set(new_image_index)
 
 if __name__ == "__main__":
     app.run()
