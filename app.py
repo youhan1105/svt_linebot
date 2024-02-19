@@ -2,7 +2,9 @@ from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageSendMessage, QuickReply, QuickReplyButton, MessageAction, TemplateSendMessage, CarouselTemplate, CarouselColumn, URIAction
 from linebot.exceptions import InvalidSignatureError
+from oauth2client.service_account import ServiceAccountCredentials
 from google.cloud import storage
+import gspread
 import os
 import random
 import re
@@ -13,33 +15,35 @@ import firebase_admin
 from firebase_admin import credentials, db
 
 
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gs_credentials.json"
+
 app = Flask(__name__)
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
-
-
-cred = credentials.Certificate("test-e2b8b-firebase-adminsdk-3hmyz-0b6d8668b4.json")
-firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://test-e2b8b-default-rtdb.asia-southeast1.firebasedatabase.app/'
-})
-ref = db.reference('https://test-e2b8b-default-rtdb.asia-southeast1.firebasedatabase.app/')
-data=ref.get()
-
-#region #全域變數用於追蹤已發送圖片的索引
-global current_row_index
-current_row_index = None
-new_image_index = 0
-data = None
-#endregion
-
-# 用戶圖片索引字典
-user_image_index = {}
-new_image_index = None
 
 #region #Linebot設定 
 channel_access_token = 'mCJ2+jdUUJZ7gvYlTbhHFcs9MPyXn16iV/67s376Fif/XG5a4Mo++0mkcwn2opdG5ExcAcgygV67cGfvBaMO4+sKIyjkuehgmIK1UsZX1CDTZ1FhFjREv4Nr9Mt0Hh6EJ8yDYxrI2stTMfvgDbDnxwdB04t89/1O/w1cDnyilFU='
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
 #endregion
+
+#region #Googlesheet串接
+scope = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
+creditials = ServiceAccountCredentials.from_json_keyfile_name('gs_credentials.json', scopes=scope)
+client = gspread.authorize(creditials)
+sheet = client.open("First sheet").sheet1
+#endregion
+
+#region #全域變數用於追蹤已發送圖片的索引
+global current_row_index
+current_row_index = None
+new_image_index = 0
+data = None
+data = json_data 
+#endregion
+
+# 用戶圖片索引字典
+user_image_index = {}
+new_image_index = None
 
 #region #處理 Line Bot Webhook
 @app.route("/callback", methods=['POST'])
@@ -59,8 +63,6 @@ def handle_message(event):
     global current_row_index
     global new_image_index
     user_id = event.source.user_id
-
-    ref = db.reference('user_index')
 
     if user_id not in user_image_index:
         user_image_index[user_id] = None
@@ -386,7 +388,6 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
 
     user_image_index[user_id] = new_image_index
-    ref.child(user_id).set(new_image_index)
 
 if __name__ == "__main__":
     app.run()
