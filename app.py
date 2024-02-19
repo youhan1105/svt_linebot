@@ -35,8 +35,8 @@ else:
     json_data = None
 
 # firebase金鑰
-cred = credentials.Certificate("my-project-1-412919-firebase-adminsdk-sv8yp-65b4d70b63.json")
-firebase_admin.initialize_app(cred, {'databaseURL': 'https://my-project-1-412919.firebaseio.com/'})
+cred = credentials.Certificate("test-e2b8b-firebase-adminsdk-3hmyz-0b6d8668b4.json")
+firebase_admin.initialize_app(cred, {'databaseURL': 'https://test-e2b8b.firebaseio.com/'})
 
 
 #region #全域變數用於追蹤已發送圖片的索引
