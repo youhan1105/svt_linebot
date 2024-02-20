@@ -116,6 +116,57 @@ def handle_message(event):
         elif user_image_index is None or not isinstance(user_image_index, int):
             user_image_index = user_data.get('user_image_index', 0 )
 
+       
+    if user_input == str("完整功能"):
+        carousel_template = CarouselTemplate(
+            columns=[
+                CarouselColumn(
+                    thumbnail_image_url="https://storage.googleapis.com/line-carat-hey-image/image/01.jpg",
+                    text="本機器人詳細功能說明",
+                    actions=[
+                        MessageAction(label="抽圖/搜尋關鍵字/特定圖片", text="抽圖/搜尋關鍵字/特定圖片")
+                    ]
+                ),
+                CarouselColumn(
+                    thumbnail_image_url="https://storage.googleapis.com/line-carat-hey-image/image/02.jpg",
+                    text="已收錄的集數清單及編號",
+                    actions=[
+                        URIAction(label="圖庫收錄集數", uri="https://linecarathey.wixsite.com/line-carat-hey/episode")
+                    ]
+                ),
+                CarouselColumn(
+                    thumbnail_image_url="https://storage.googleapis.com/line-carat-hey-image/image/03.jpg",
+                    text="系列+集數+成員+第幾張",
+                    actions=[
+                        URIAction(label="編碼說明", uri="https://linecarathey.wixsite.com/line-carat-hey/rules")
+                    ]
+                )
+            ]
+        )
+        carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
+        line_bot_api.reply_message(event.reply_token, carousel_message)
+
+    elif user_input == str("抽圖/搜尋關鍵字/特定圖片"):
+        reply_message1 = "🎲隨機圖片：\n輸入「抽」，獲得隨機圖片\n\n🍒抽指定成員：\n輸入成員各自的emoji，獲得該成員隨機圖片\n\n📸發送圖片：\n輸入編號（不含括號），獲得指定圖片\n如：G1140002\n\n🔍搜尋圖片：\n直接輸入關鍵字，出現包含此關鍵字的所有圖片編碼"        
+        reply_message2 = "🔢整集列表：\n參考「圖庫收錄集數」清單，輸入「1英文+3數字」，獲得該集圖片清單\n\n選單 》「完整功能」\n》點選「圖庫收錄集數」\n》查找特定集數\n》輸入該集的編碼（1英文+3數字）\n》獲得該集圖片清單"                
+        line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=reply_message1),TextSendMessage(text=reply_message2)])
+
+    elif user_input == str("圖庫收錄集數"):
+
+        carousel_template = CarouselTemplate(
+            columns=[
+                CarouselColumn(
+                    thumbnail_image_url="https://i.imgur.com/A3XvDnd.jpg",
+                    text="已收錄集數清單及編號",
+                    actions=[
+                        URIAction(label="已收錄集數", uri="https://linecarathey.wixsite.com/line-carat-hey/episode")
+                    ]
+                )
+            ]
+        )
+        carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
+        line_bot_api.reply_message(event.reply_token, carousel_message)
+
     elif user_input == str('抽'):
         image_urls = []
         random_row = random.choice(data)  
