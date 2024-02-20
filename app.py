@@ -44,8 +44,6 @@ ref = db.reference('/')
 fire_data = ref.get()
 if fire_data is None:
     fire_data = {}
-current_row_index = None
-new_image_index = 0
 #endregion
 
 #region #處理 Line Bot Webhook
@@ -63,6 +61,8 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    current_row_index = None
+    new_image_index = 0
     user_id = event.source.user_id
     user_input = event.message.text
     user_data = fire_data.get(user_id)
