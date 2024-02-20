@@ -128,8 +128,8 @@ def handle_message(event):
 
                 if current_row_index < len(data):
                     next_row = data[current_row_index]
-                    next_image_urls = next_row.get('圖片網址')     
-                    new_image_index = data.index(next_row) 
+                    next_image_urls = next_row.get('圖片網址')
+                    new_image_index = current_row_index     
                     next_image_messages = [ImageSendMessage(original_content_url=next_image_urls, preview_image_url=next_image_urls)]
             
                     quick_reply_items = [
@@ -164,7 +164,7 @@ def handle_message(event):
                 if current_row_index >= 0:
                     previous_row = data[current_row_index]
                     previous_image_urls = previous_row.get('圖片網址')
-                    new_image_index = data.index(previous_row) 
+                    new_image_index = current_row_index 
                     previous_image_messages = [ImageSendMessage(original_content_url=previous_image_urls, preview_image_url=previous_image_urls)]
             
                     quick_reply_items = [
