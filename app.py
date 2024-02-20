@@ -71,6 +71,7 @@ def handle_message(event):
         user_image_index = {}
         user_data = {'user_image_index': user_image_index}
         ref.child(user_id).set(user_data)
+        print("user_data:", user_data)
 
     else:
         user_image_index = user_data.get('user_image_index', {})
@@ -79,13 +80,11 @@ def handle_message(event):
         if user_image_index is None or not isinstance(user_image_index, dict):
             user_image_index = {}
 
-
     if user_input == str('抽'):
         image_urls = []
         random_row = random.choice(data)
         image_urls = random_row.get('圖片網址')  
-        current_row_index = data.index(random_row)
-        new_image_index = current_row_index
+        new_image_index = data.index(random_row)
         image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
     
         quick_reply_items = [
@@ -101,6 +100,9 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, image_messages)
 
     elif user_input == str('取得編號'):
+        current_row_index = user_image_index[user_id]
+        print("user_image_index:", user_image_index)
+        print("current_row_index:", current_row_index)
         if user_image_index is not None and user_id in user_image_index and user_image_index[user_id] is not None:
             
             if current_row_index is not None and current_row_index < len(data):
