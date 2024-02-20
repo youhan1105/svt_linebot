@@ -99,8 +99,9 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, image_messages)
 
     elif user_input == str('取得編號'):
+        current_row_index = user_image_index[user_id]
+
         if user_image_index is not None and user_id in user_image_index:
-            current_row_index = user_image_index[user_id]
             
             if current_row_index is not None and current_row_index < len(data):
                 current_row = data[current_row_index]
@@ -114,17 +115,14 @@ def handle_message(event):
                 ]
                 quick_reply = QuickReply(items=quick_reply_items)
 
-                # 建立回覆訊息，包含 Quick Reply 按鈕
                 text_message = TextSendMessage(text=f"圖片編號為：\n【{image_number}】{image_name}", quick_reply=quick_reply)
-
-        
                 line_bot_api.reply_message(event.reply_token, text_message)
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="請先抽圖片"))
 
     elif user_input == str("下一張"):
+        current_row_index = user_image_index[user_id]
         if user_id in user_image_index:
-            current_row_index = user_image_index[user_id]
             if current_row_index is not None:
                 current_row_index += 1
 
