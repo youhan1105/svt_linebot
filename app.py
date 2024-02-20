@@ -59,6 +59,37 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+
+    emoji_mapping = {
+        emoji.emojize("🍒"): "1",
+        emoji.emojize("🦁"): "1",   
+        emoji.emojize("🐰"): "2",
+        emoji.emojize("😇"): "2",
+        emoji.emojize("👼🏻"): "2",
+        emoji.emojize("👼"): "2",
+        emoji.emojize("🦌"): "3",
+        emoji.emojize("🐱"): "4",
+        emoji.emojize("🐯"): "5",
+        emoji.emojize("🐹"): "5",
+        emoji.emojize("🐈‍⬛"): "6",
+        emoji.emojize("🎮"): "6",
+        emoji.emojize("👓"): "6",        
+        emoji.emojize("🍚"): "7",
+        emoji.emojize("🍑"): "7",
+        emoji.emojize("🎱"): "8",
+        emoji.emojize("🐸"): "8",
+        emoji.emojize("🐶"): "9",
+        emoji.emojize("🌻"): "9",        
+        emoji.emojize("⚔️"): "10",
+        emoji.emojize("🍕"): "10",
+        emoji.emojize("🍊"): "11",
+        emoji.emojize("🐻"): "11",
+        emoji.emojize("🐻‍❄️"): "12",
+        emoji.emojize("🎧"): "12",
+        emoji.emojize("🦖"): "13",
+        emoji.emojize("🦦"): "13",
+    }
+ 
     global current_row_index
     global new_image_index
     user_id = event.source.user_id
@@ -74,7 +105,6 @@ def handle_message(event):
     user_data = fire_data.get(user_id, {})
     user_image_index = user_data.get('user_image_index', 0 )
     current_row_index = user_image_index
-    print('current_row_index-0:',current_row_index)
 
     if user_id not in fire_data:
         user_image_index = 0
