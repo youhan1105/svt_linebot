@@ -71,9 +71,10 @@ def handle_message(event):
 
     if user_data is None:
         user_image_index = {}
-        ref.child(user_id).set({'user_image_index': user_image_index})
+        user_data = {'user_image_index': user_image_index}
+        ref.child(user_id).set(user_data)
     else:
-        user_image_index = user_data.get('user_image_index')
+        user_image_index = user_data.get('user_image_index', {})
         
         if user_image_index is None:
             user_image_index = {}
