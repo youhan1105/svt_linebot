@@ -76,7 +76,7 @@ def handle_message(event):
     else:
         user_image_index = user_data.get('user_image_index', {})
         
-        if user_image_index is None:
+        if user_image_index is None or not isinstance(user_image_index, dict):
             user_image_index = {}
 
     if user_input == str('抽'):
