@@ -99,8 +99,8 @@ def handle_message(event):
     elif user_input == str('取得編號'):
         if user_image_index is not None and user_id in user_image_index:
             current_row_index = user_image_index[user_id]
+            
             if current_row_index is not None and current_row_index < len(data):
-                current_row_index < len(data):
                 current_row = data[current_row_index]
                 image_number = current_row.get('編號')
                 image_name = current_row.get('中字')
