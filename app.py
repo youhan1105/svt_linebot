@@ -77,7 +77,7 @@ def handle_message(event):
     print('user_data',user_data)
     print('current_row_index-0:',current_row_index)
 
-    if user_id not in user_data:
+    if user_id not in fire_data:
         user_image_index = 0
         print('not in')
 
