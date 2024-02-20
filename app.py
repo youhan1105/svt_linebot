@@ -64,30 +64,29 @@ def handle_message(event):
     user_id = event.source.user_id
     user_input = event.message.text
 
-    #region #Firebase資料
+    #Firebase資料
     ref = db.reference('/')
     fire_data = ref.get()
 
     if fire_data is None:
         fire_data = {}
     
-    user_data = {}
     user_data = fire_data.get(user_id, {})
     user_image_index = user_data.get('user_image_index', 0 )
     current_row_index = user_image_index
+    print('user_data',user_data)
     print('current_row_index-0:',current_row_index)
 
-    #endregion
     if user_id not in user_data:
         user_image_index = 0
-        print('current_row_index-1:',current_row_index)
+        print('not in')
 
-        if user_data is None:
+        if not user_data:
             user_data = {'user_image_index': user_image_index}
             ref.child(user_id).set(user_data)
-            print('current_row_index-2:',current_row_index)
+            print('set')
 
-        elif user_image_index is None or not isinstance(user_image_index, dict):
+        elif user_image_index is None or not isinstance(user_image_index, int):
             user_image_index = user_data.get('user_image_index', 0 )
 
     elif user_input == str('抽'):
