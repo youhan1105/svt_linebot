@@ -63,8 +63,8 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    current_row_index = 0
-    new_image_index = 0
+    global current_row_index
+    global new_image_index
     user_id = event.source.user_id
     user_input = event.message.text
 
