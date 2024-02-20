@@ -67,18 +67,10 @@ def handle_message(event):
     user_input = event.message.text
     user_data = fire_data.get(user_id)
 
-    if user_data is None:
-        user_image_index = {}
-        user_data = {'user_image_index': user_image_index}
-        ref.child(user_id).set(user_data)
-
-    else:
-        user_image_index = user_data.get('user_image_index', {})
-        current_row_index = user_image_index[user_id]
-        
-        if user_image_index is None or not isinstance(user_image_index, dict):
-            user_image_index = {}
-
+    if 'user_image_index' not in user_data:
+        user_data['user_image_index'] = 0
+    
+        current_row_index = user_data['user_image_index']
 
     if user_input == str('抽'):
         image_urls = []
