@@ -42,6 +42,8 @@ data=json_data
 #region #Firebase資料
 ref = db.reference('/')
 fire_data = ref.get()
+if fire_data is None:
+    fire_data = {}
 current_row_index = None
 new_image_index = 0
 #endregion
@@ -305,4 +307,3 @@ def handle_message(event):
 
 if __name__ == "__main__":
     app.run()
-
