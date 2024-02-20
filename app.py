@@ -35,8 +35,7 @@ bucket_name = 'line-carat-hey-image'
 blob_name = 'Database/svt-data-0219.json'
 bucket = storage_client.bucket(bucket_name)
 blob = bucket.blob(blob_name)
-json_data = json.loads(blob.download_as_string())
-data=json_data
+data = json.loads(blob.download_as_string())
 #endregion
 
 #region #Firebase資料
@@ -72,11 +71,14 @@ def handle_message(event):
         user_image_index = {}
         user_data = {'user_image_index': user_image_index}
         ref.child(user_id).set(user_data)
+        current_row_index = user_image_index[user_id]
+
     else:
         user_image_index = user_data.get('user_image_index', {})
         
         if user_image_index is None or not isinstance(user_image_index, dict):
             user_image_index = {}
+
 
     if user_input == str('抽'):
         image_urls = []
@@ -99,8 +101,6 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, image_messages)
 
     elif user_input == str('取得編號'):
-        current_row_index = user_image_index[user_id]
-
         if user_image_index is not None and user_id in user_image_index:
             
             if current_row_index is not None and current_row_index < len(data):
@@ -121,7 +121,6 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="請先抽圖片"))
 
     elif user_input == str("下一張"):
-        current_row_index = user_image_index[user_id]
         if user_id in user_image_index:
             if current_row_index is not None:
                 current_row_index += 1
@@ -157,7 +156,6 @@ def handle_message(event):
 
     elif user_input == str("上一張"):
         if user_id in user_image_index:
-            current_row_index = user_image_index[user_id]
             if current_row_index is not None:
                 current_row_index -= 1
 
