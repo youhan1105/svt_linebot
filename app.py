@@ -65,6 +65,7 @@ def handle_message(event):
         fire_data = {}
     user_image_index = fire_data.get('user_image_index', {})
     current_row_index = user_image_index.get(user_id)
+    user_data = fire_data.get(user_id)
     #endregion
 
     if user_data is None:
