@@ -68,11 +68,14 @@ def handle_message(event):
     user_data = fire_data.get(user_id)
 
     if user_data is None:
-        user_image_index = None
+        user_image_index = {}
         ref.child(user_id).set({'user_image_index': None})
     else:
         user_image_index = user_data.get('user_image_index')
-
+        
+        if user_image_index is None:
+            user_image_index = {}
+            
     if user_input == str('抽'):
         image_urls = []
         random_row = random.choice(data)  
