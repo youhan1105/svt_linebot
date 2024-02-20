@@ -11,7 +11,13 @@ import json
 from firebase_admin import credentials
 from firebase_admin import db
 
+#region #串接憑證
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gs_credentials.json"
+cred = credentials.Certificate("test-firebase-token.json")
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://test-e2b8b-default-rtdb.asia-southeast1.firebasedatabase.app/'
+})
+#endregion
 
 app = Flask(__name__)
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
