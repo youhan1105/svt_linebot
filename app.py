@@ -101,7 +101,7 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, image_messages)
 
     elif user_input == str('取得編號'):
-        if user_image_index is not None and user_id in user_image_index:
+        if user_image_index is not None and user_id in user_image_index and user_image_index[user_id] is not None:
             
             if current_row_index is not None and current_row_index < len(data):
                 current_row = data[current_row_index]
@@ -184,126 +184,6 @@ def handle_message(event):
                     ]
                     quick_reply = QuickReply(items=quick_reply_items)
                     line_bot_api.reply_message(event.reply_token, TextSendMessage(text="已經是第一張圖片了"))
-
-    elif re.match(r'^[A-Za-z]', user_input) and len(user_input) == 8:  # 檢查是否為八字元且為英文開頭
-        image_urls = []
-
-        # 尋找符合的圖片編號      
-        for row_index,row in enumerate(data):
-            if str(user_input) in row[str('編號')]:
-                image_urls.append(row['圖片網址'])
-                current_row_index = row_index
-
-		# 如果找到符合的圖片網址		   
-        if image_urls:  
-
-            user_id = event.source.user_id
-            user_image_index[user_id] = current_row_index
-
-            image_messages = [ImageSendMessage(original_content_url=url, preview_image_url=url) for url in image_urls]
-            quick_reply_items = [
-                QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
-                QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
-                QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
-                QuickReplyButton(action=MessageAction(label='抽', text='抽'))
-            ]
-            quick_reply = QuickReply(items=quick_reply_items)
-
-            for image_message in image_messages:
-                image_message.quick_reply = quick_reply
-            
-            line_bot_api.reply_message(event.reply_token, image_messages)
-            new_image_index = current_row_index
-        
-    
-        else:  
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合的圖片編號"))
-
-    elif re.match(r'^[A-Za-z]\d{3}$', user_input): # 搜尋集數，得到整集的圖
-        matched_data = []
-        for row in data:
-            if str(user_input) in row[str('集數')]:
-                matched_data.append(f"【{row[str('編號')]}】 {row[str('中字')]}")
-        
-        if matched_data:
-            reply_message = "【Gxxx13xx】此數為成員編號\n＊輸入編號時請去掉括號＊\n\n"
-            reply_message += "\n".join(matched_data)
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
-        
-        else:
-            reply_message = "尚未有此集的資料"
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
-
-    elif user_input in emoji_mapping: # 抽emoji
-        search_condition = emoji.emojize(emoji_mapping[user_input])
-
-        # 搜尋欄位內容為搜尋條件的橫列
-        matched_data = []
-        image_urls = []
-        for row in data:
-           # 檢查 "成員" 欄位的值是否可迭代
-            if hasattr(row[str('成員')], '__iter__'):
-                if str(search_condition) in row[str('成員')]:
-                    matched_data.append(row)
-            else:
-                # 如果 "成員" 欄位的值不可迭代，將其轉換為字符串再進行比較
-                if str(search_condition) == str(row[str('成員')]):
-                    matched_data.append(row)
-        for row in data:
-           # 檢查 "成員" 欄位的值是否可迭代
-            if hasattr(row[str('主題')], '__iter__'):
-                if str(search_condition) in row[str('主題')]:
-                    matched_data.append(row)
-            else:
-                # 如果 "成員" 欄位的值不可迭代，將其轉換為字符串再進行比較
-                if str(search_condition) == str(row[str('主題')]):
-                    matched_data.append(row)
-
-
-        if matched_data:
-            # 隨機選擇一列資料
-            random_row = random.choice(matched_data)
-            image_urls = random_row.get('圖片網址') 
-            current_row_index = data.index(random_row)
-
-            user_id = event.source.user_id
-            user_image_index[user_id] = current_row_index
-
-            image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
-
-            quick_reply_items = [
-                QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
-                QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
-                QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
-                QuickReplyButton(action=MessageAction(label='抽', text='抽')),
-                QuickReplyButton(action=MessageAction(label=user_input, text=user_input))
-            ]
-
-            quick_reply = QuickReply(items=quick_reply_items)
-            
-            for image_message in image_messages:
-                image_message.quick_reply = quick_reply
-
-            line_bot_api.reply_message(event.reply_token, image_messages)
-            new_image_index = current_row_index
-        else:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text="無符合條件的emoji"))
-
-    else:  #任意文字查詢
-        matched_data = []
-    
-        for row in data:
-            if str(user_input) in row[str('中字')]:
-                matched_data.append(f"【{row[str('編號')]}】 {row[str('中字')]}")
-    
-    
-        if matched_data:
-            reply_message = "【Gxxx13xx】此數為成員編號\n＊輸入編號時請去掉括號＊\n\n"
-            reply_message += "\n".join(matched_data)
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
-        else:
-            reply_message = "無符合的資料"
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
 
     ref.child(user_id).update({'user_image_index': new_image_index})
 
