@@ -70,6 +70,7 @@ def handle_message(event):
     if user_data is None:
         ref.child(user_id).set({'user_image_index': None})
     else:
+	user_image_index = None
         user_image_index = user_data.get('user_image_index')
 
     if user_input == str('抽'):
