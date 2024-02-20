@@ -44,9 +44,11 @@ ref = db.reference('/')
 fire_data = ref.get()
 if fire_data is None:
     fire_data = {}
-
 user_image_index = fire_data.get('user_image_index', {})
 #endregion
+
+current_row_index = None
+new_image_index = 0
 
 #region #處理 Line Bot Webhook
 @app.route("/callback", methods=['POST'])
@@ -63,8 +65,6 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    current_row_index = None
-    new_image_index = 0
     user_id = event.source.user_id
     user_input = event.message.text
     user_data = fire_data.get(user_id)
@@ -81,9 +81,9 @@ def handle_message(event):
 
     if user_input == str('抽'):
         image_urls = []
-        random_row = random.choice(data)  
+        random_row = random.choice(data)
         image_urls = random_row.get('圖片網址')  
-        current_row_index = data.index(random_row) 
+        current_row_index = data.index(random_row)
         new_image_index = current_row_index
         image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
     
