@@ -44,10 +44,6 @@ data = None
 data = json_data 
 #endregion
 
-# 用戶圖片索引字典
-user_image_index = {}
-new_image_index = None
-
 #region #處理 Line Bot Webhook
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -74,31 +70,25 @@ def handle_message(event):
 
     if fire_data is None:
         fire_data = {}
-
+    
+    user_data = {}
     user_data = fire_data.get(user_id, {})
-    user_image_index = user_data.get('user_image_index', {})
-    current_row_index = user_image_index.get(user_id)
-
-    user_data = fire_data.get(user_id)
+    user_image_index = user_data.get('user_image_index', 0 )
+    current_row_index = user_image_index
     print('current_row_index-0:',current_row_index)
 
     #endregion
-    # 如果 user_id 不在 user_image_index 中，則進行初始化
-    if user_id not in user_image_index:
-        user_image_index[user_id] = None
+    if user_id not in user_data:
+        user_image_index[user_id] = 0
         print('current_row_index-1:',current_row_index)
 
         if user_data is None:
-            user_image_index = {}
             user_data = {'user_image_index': user_image_index}
             ref.child(user_id).set(user_data)
             print('current_row_index-2:',current_row_index)
 
-        else:
-            user_image_index = user_data.get('user_image_index', {})
-
-            if user_image_index is None or not isinstance(user_image_index, dict):
-                user_image_index = {}
+        elif user_image_index is None or not isinstance(user_image_index, dict):
+            user_image_index = 0
 
     emoji_mapping = {
         emoji.emojize("🍒"): "1",
