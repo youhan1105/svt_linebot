@@ -68,6 +68,7 @@ def handle_message(event):
     user_data = fire_data.get(user_id)
 
     if user_data is None:
+	user_image_index = None
         ref.child(user_id).set({'user_image_index': None})
     else:
 	user_image_index = None
