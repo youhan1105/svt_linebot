@@ -66,8 +66,7 @@ def handle_message(event):
     user_id = event.source.user_id
     user_input = event.message.text
     user_data = fire_data.get(user_id)
-    print("user_image_index-0:", user_image_index)
-    print("current_row_index-0:", current_row_index)
+
 
     if user_data is None:
         user_image_index = {}
@@ -81,7 +80,6 @@ def handle_message(event):
             user_image_index = {}
 
     if user_input == str('抽'):
-        image_urls = []
         random_row = random.choice(data)
         image_urls = random_row.get('圖片網址')  
         new_image_index = data.index(random_row)
@@ -100,16 +98,13 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, image_messages)
 
     elif user_input == str('取得編號'):
-        current_row_index = user_image_index.get(user_id)
-        print("user_image_index:", user_image_index)
-        print("current_row_index:", current_row_index)
-        if user_image_index is not None and user_id in user_image_index and user_image_index[user_id] is not None:
-            
-            if current_row_index is not None and current_row_index < len(data):
+        if current_row_index is not None:
+            if current_row_index < len(data):
                 current_row = data[current_row_index]
                 image_number = current_row.get('編號')
                 image_name = current_row.get('中字')
 
+        
                 quick_reply_items = [
                     QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
                     QuickReplyButton(action=MessageAction(label='下一張', text='下一張')),
@@ -117,21 +112,26 @@ def handle_message(event):
                 ]
                 quick_reply = QuickReply(items=quick_reply_items)
 
+                # 建立回覆訊息，包含 Quick Reply 按鈕
                 text_message = TextSendMessage(text=f"圖片編號為：\n【{image_number}】{image_name}", quick_reply=quick_reply)
+
+        
                 line_bot_api.reply_message(event.reply_token, text_message)
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="請先抽圖片"))
 
     elif user_input == str("下一張"):
-        current_row_index = user_image_index.get(user_id)
+        user_id = event.source.user_id
         if user_id in user_image_index:
+            current_row_index = user_image_index[user_id]
             if current_row_index is not None:
                 current_row_index += 1
 
                 if current_row_index < len(data):
                     next_row = data[current_row_index]
-                    next_image_urls = next_row.get('圖片網址')
-                    new_image_index = current_row_index     
+                    next_image_urls = next_row.get('圖片網址')     
+                    current_row_index = data.index(next_row) 
+                    new_image_index = current_row_index
                     next_image_messages = [ImageSendMessage(original_content_url=next_image_urls, preview_image_url=next_image_urls)]
             
                     quick_reply_items = [
