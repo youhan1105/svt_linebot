@@ -38,14 +38,6 @@ blob = bucket.blob(blob_name)
 data = json.loads(blob.download_as_string())
 #endregion
 
-#region #Firebase資料
-ref = db.reference('/')
-fire_data = ref.get()
-if fire_data is None:
-    fire_data = {}
-user_image_index = fire_data.get('user_image_index', {})
-#endregion
-
 #region #處理 Line Bot Webhook
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -65,8 +57,15 @@ def handle_message(event):
     new_image_index = None
     user_id = event.source.user_id
     user_input = event.message.text
-    user_data = fire_data.get(user_id)
 
+    #region #Firebase資料
+    ref = db.reference('/')
+    fire_data = ref.get()
+    if fire_data is None:
+        fire_data = {}
+    user_image_index = fire_data.get('user_image_index', {})
+    current_row_index = user_image_index.get(user_id)
+    #endregion
 
     if user_data is None:
         user_image_index = {}
@@ -80,6 +79,7 @@ def handle_message(event):
             user_image_index = {}
 
     if user_input == str('抽'):
+        image_urls = []
         random_row = random.choice(data)
         image_urls = random_row.get('圖片網址')  
         new_image_index = data.index(random_row)
