@@ -47,9 +47,6 @@ if fire_data is None:
 user_image_index = fire_data.get('user_image_index', {})
 #endregion
 
-current_row_index = None
-new_image_index = 0
-
 #region #處理 Line Bot Webhook
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -65,6 +62,8 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    current_row_index = None
+    new_image_index = None
     user_id = event.source.user_id
     user_input = event.message.text
     user_data = fire_data.get(user_id)
