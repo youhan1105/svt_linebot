@@ -66,6 +66,8 @@ def handle_message(event):
     user_id = event.source.user_id
     user_input = event.message.text
     user_data = fire_data.get(user_id)
+    print("user_image_index-0:", user_image_index)
+    print("current_row_index-0:", current_row_index)
 
     if user_data is None:
         user_image_index = {}
