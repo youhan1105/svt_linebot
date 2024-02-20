@@ -44,6 +44,8 @@ ref = db.reference('/')
 fire_data = ref.get()
 if fire_data is None:
     fire_data = {}
+
+user_image_index = fire_data.get('user_image_index', {})
 #endregion
 
 #region #處理 Line Bot Webhook
