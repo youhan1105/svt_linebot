@@ -88,7 +88,7 @@ def handle_message(event):
             print('current_row_index-2:',current_row_index)
 
         elif user_image_index is None or not isinstance(user_image_index, dict):
-            user_image_index = 0
+            user_image_index = user_data.get('user_image_index', 0 )
 
     elif user_input == str('抽'):
         image_urls = []
@@ -96,6 +96,7 @@ def handle_message(event):
         image_urls = random_row.get('圖片網址')  
         new_image_index = data.index(random_row) 
         image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
+        print('current_row_index-ran:',current_row_index)
     
         quick_reply_items = [
             QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
