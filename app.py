@@ -60,63 +60,6 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
 
-    emoji_mapping = {
-        emoji.emojize("🍒"): "1",
-        emoji.emojize("🦁"): "1",   
-        emoji.emojize("🐰"): "2",
-        emoji.emojize("😇"): "2",
-        emoji.emojize("👼🏻"): "2",
-        emoji.emojize("👼"): "2",
-        emoji.emojize("🦌"): "3",
-        emoji.emojize("🐱"): "4",
-        emoji.emojize("🐯"): "5",
-        emoji.emojize("🐹"): "5",
-        emoji.emojize("🐈‍⬛"): "6",
-        emoji.emojize("🎮"): "6",
-        emoji.emojize("👓"): "6",        
-        emoji.emojize("🍚"): "7",
-        emoji.emojize("🍑"): "7",
-        emoji.emojize("🎱"): "8",
-        emoji.emojize("🐸"): "8",
-        emoji.emojize("🐶"): "9",
-        emoji.emojize("🌻"): "9",        
-        emoji.emojize("⚔️"): "10",
-        emoji.emojize("🍕"): "10",
-        emoji.emojize("🍊"): "11",
-        emoji.emojize("🐻"): "11",
-        emoji.emojize("🐻‍❄️"): "12",
-        emoji.emojize("🎧"): "12",
-        emoji.emojize("🦖"): "13",
-        emoji.emojize("🦦"): "13",
-    }
- 
-    global current_row_index
-    global new_image_index
-    user_id = event.source.user_id
-    user_input = event.message.text
-
-    #Firebase資料
-    ref = db.reference('/')
-    fire_data = ref.get()
-
-    if fire_data is None:
-        fire_data = {}
-    
-    user_data = fire_data.get(user_id, {})
-    user_image_index = user_data.get('user_image_index', 0 )
-    current_row_index = user_image_index
-
-    if user_id not in fire_data:
-        user_image_index = 0
-
-        if not user_data:
-            user_data = {'user_image_index': user_image_index}
-            ref.child(user_id).set(user_data)
-
-        elif user_image_index is None or not isinstance(user_image_index, int):
-            user_image_index = user_data.get('user_image_index', 0 )
-
-       
     if user_input == str("完整功能"):
         carousel_template = CarouselTemplate(
             columns=[
@@ -166,6 +109,63 @@ def handle_message(event):
         )
         carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
         line_bot_api.reply_message(event.reply_token, carousel_message)
+
+    emoji_mapping = {
+        emoji.emojize("🍒"): "1",
+        emoji.emojize("🦁"): "1",   
+        emoji.emojize("🐰"): "2",
+        emoji.emojize("😇"): "2",
+        emoji.emojize("👼🏻"): "2",
+        emoji.emojize("👼"): "2",
+        emoji.emojize("🦌"): "3",
+        emoji.emojize("🐱"): "4",
+        emoji.emojize("🐯"): "5",
+        emoji.emojize("🐹"): "5",
+        emoji.emojize("🐈‍⬛"): "6",
+        emoji.emojize("🎮"): "6",
+        emoji.emojize("👓"): "6",        
+        emoji.emojize("🍚"): "7",
+        emoji.emojize("🍑"): "7",
+        emoji.emojize("🎱"): "8",
+        emoji.emojize("🐸"): "8",
+        emoji.emojize("🐶"): "9",
+        emoji.emojize("🌻"): "9",        
+        emoji.emojize("⚔️"): "10",
+        emoji.emojize("🍕"): "10",
+        emoji.emojize("🍊"): "11",
+        emoji.emojize("🐻"): "11",
+        emoji.emojize("🐻‍❄️"): "12",
+        emoji.emojize("🎧"): "12",
+        emoji.emojize("🦖"): "13",
+        emoji.emojize("🦦"): "13",
+    }
+
+
+    global current_row_index
+    global new_image_index
+    user_id = event.source.user_id
+    user_input = event.message.text
+
+    #Firebase資料
+    ref = db.reference('/')
+    query = ref.order_by_child('user_id').equal_to(user_id)
+
+    if query is None:
+        query = {}
+    
+    user_data = query.get()    
+    user_image_index = user_data.get('user_image_index', 0 )
+    current_row_index = user_image_index
+
+    if user_id not in query:
+        user_image_index = 0
+
+        if not user_data:
+            user_data = {'user_image_index': user_image_index}
+            ref.child(user_id).set(user_data)
+
+        elif user_image_index is None or not isinstance(user_image_index, int):
+            user_image_index = user_data.get('user_image_index', 0 )
 
     elif user_input == str('抽'):
         image_urls = []
@@ -338,6 +338,15 @@ def handle_message(event):
             else:
                 # 如果 "成員" 欄位的值不可迭代，將其轉換為字符串再進行比較
                 if str(search_condition) == str(row[str('成員')]):
+                    matched_data.append(row)
+        for row in data:
+           # 檢查 "成員" 欄位的值是否可迭代
+            if hasattr(row[str('主題')], '__iter__'):
+                if str(search_condition) in row[str('主題')]:
+                    matched_data.append(row)
+            else:
+                # 如果 "成員" 欄位的值不可迭代，將其轉換為字符串再進行比較
+                if str(search_condition) == str(row[str('主題')]):
                     matched_data.append(row)
 
         if matched_data:
