@@ -102,6 +102,7 @@ def handle_message(event):
     user_ref = ref.child(user_id)
     user_data = {}
     user_data = user_ref.get()
+    user_image_index = 0
 
     if user_data is None:
         user_data = {}
