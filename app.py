@@ -88,6 +88,8 @@ def handle_message(event):
         emoji.emojize("🎧"): "12",
         emoji.emojize("🦖"): "13",
         emoji.emojize("🦦"): "13",
+        emoji.emojize("💰"): "工作",
+
     }
 
     global current_row_index
@@ -103,14 +105,15 @@ def handle_message(event):
     user_image_index = user_data.get('user_image_index', 0 )
     current_row_index = user_image_index
 
-    if not user_data:
+    if user_data is None:
+        user_image_index = 0
         user_data = {'user_image_index': user_image_index}
         ref.child(user_id).set(user_data)
-        user_image_index = 0
 
-    elif user_image_index is None or not isinstance(user_image_index, int):
-        user_image_index = user_data.get('user_image_index', 0 )
-
+    else:
+        user_image_index = user_data.get('user_image_index', 0)
+        if not isinstance(user_image_index, int):
+            user_image_index = 0
 
     if user_input == str("完整功能"):
         carousel_template = CarouselTemplate(
