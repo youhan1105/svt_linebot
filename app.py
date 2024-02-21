@@ -97,24 +97,19 @@ def handle_message(event):
 
     #Firebase資料
     ref = db.reference('/')
-    query = ref.order_by_child('user_id').equal_to(user_id)
-
-    if query is None:
-        query = {}
-    
-    user_data = query.get()    
+    user_ref = ref.child(user_id)
+    user_data = {}
+    user_data = user_ref.get()
     user_image_index = user_data.get('user_image_index', 0 )
     current_row_index = user_image_index
 
-    if user_id not in query:
+    if not user_data:
+        user_data = {'user_image_index': user_image_index}
+        ref.child(user_id).set(user_data)
         user_image_index = 0
 
-        if not user_data:
-            user_data = {'user_image_index': user_image_index}
-            ref.child(user_id).set(user_data)
-
-        elif user_image_index is None or not isinstance(user_image_index, int):
-            user_image_index = user_data.get('user_image_index', 0 )
+    elif user_image_index is None or not isinstance(user_image_index, int):
+        user_image_index = user_data.get('user_image_index', 0 )
 
 
     if user_input == str("完整功能"):
