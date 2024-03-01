@@ -173,7 +173,7 @@ def handle_message(event):
         random_row = []
         random_row_index = random.randint(1, all_data)
         random_row = sheet.row_values(random_row_index)  
-        image_urls = random_row.get('圖片網址')  
+        image_urls = random_row[3]
         new_image_index = random_row_index 
         image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
     
