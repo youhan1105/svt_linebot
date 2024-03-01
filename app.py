@@ -3,6 +3,8 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageSendMessage, QuickReply, QuickReplyButton, MessageAction, TemplateSendMessage, CarouselTemplate, CarouselColumn, URIAction
 from linebot.exceptions import InvalidSignatureError
 from google.cloud import storage
+from oauth2client.service_account import ServiceAccountCredentials
+
 import gspread
 import os
 import random
@@ -12,14 +14,12 @@ import json
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
-from oauth2client.service_account import ServiceAccountCredentials
-
 
 #region #串接憑證
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gs_credentials.json"
-cred = credentials.Certificate("test-firebase-token.json")
+cred = credentials.Certificate("svt-linebot-firebase.json")
 firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://test-e2b8b-default-rtdb.asia-southeast1.firebasedatabase.app/'
+    'databaseURL': 'https://svt-linebot-default-rtdb.asia-southeast1.firebasedatabase.app//'
 })
 #endregion
 
@@ -36,13 +36,12 @@ handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
 scope = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
 creditials = ServiceAccountCredentials.from_json_keyfile_name('gs_credentials.json', scopes=scope)
 client = gspread.authorize(creditials)
-sheet = client.open("First sheet").sheet1
+sheet = client.open("SVT-linebot").sheet1
 #endregion
 
 #region #全域變數用於追蹤已發送圖片的索引
 new_image_index = 0
-data = None
-data = json_data 
+all_data = 964
 #endregion
 
 #region #處理 Line Bot Webhook
@@ -90,14 +89,16 @@ def handle_message(event):
         emoji.emojize("🦖"): "13",
         emoji.emojize("🦦"): "13",
         emoji.emojize("💰"): "工作",
+	emoji.emojize("❤️"): "誇誇",
+	emoji.emojize("🍜"): "吃飯",
 
     }
-
+ 
     global current_row_index
     global new_image_index
     user_id = event.source.user_id
     user_input = event.message.text
-
+	
     #Firebase資料
     ref = db.reference('/')
     user_ref = ref.child(user_id)
@@ -116,7 +117,7 @@ def handle_message(event):
 
     user_image_index = user_data.get('user_image_index', 0 )
     current_row_index = user_image_index
-
+	
     if user_input == str("完整功能"):
         carousel_template = CarouselTemplate(
             columns=[
@@ -169,9 +170,11 @@ def handle_message(event):
 
     elif user_input == str('抽'):
         image_urls = []
-        random_row = random.choice(data)  
+        random_row = []
+        random_row_index = random.randint(1, all_data)
+        random_row = sheet.row_values(random_row_index)  
         image_urls = random_row.get('圖片網址')  
-        new_image_index = data.index(random_row) 
+        new_image_index = random_row_index 
         image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
     
         quick_reply_items = [
@@ -188,8 +191,9 @@ def handle_message(event):
 
     elif user_input == str('取得編號'):
         if current_row_index is not None:
-            if current_row_index < len(data):
-                current_row = data[current_row_index]
+            if current_row_index < len(all_data):
+                current_row = []
+                current_row = sheet.row_values(current_row_index)
                 image_number = current_row.get('編號')
                 image_name = current_row.get('中字')
 
@@ -214,10 +218,9 @@ def handle_message(event):
         if current_row_index is not None:
             current_row_index += 1
 
-            if current_row_index < len(data):
-                next_row = data[current_row_index]
-                next_image_urls = next_row.get('圖片網址')     
-                current_row_index = data.index(next_row) 
+            if current_row_index < len(all_data):
+                next_row = sheet.row_values(current_row_index)
+                next_image_urls = next_row.get('圖片網址')
                 new_image_index = current_row_index
                 next_image_messages = [ImageSendMessage(original_content_url=next_image_urls, preview_image_url=next_image_urls)]
             
@@ -249,11 +252,10 @@ def handle_message(event):
             current_row_index -= 1
 
             if current_row_index >= 0:
-                next_row = data[current_row_index]
-                next_image_urls = next_row.get('圖片網址')     
-                current_row_index = data.index(next_row) 
+                previous_row = sheet.row_values(current_row_index)
+                previous_image_urls = previous_row.get('圖片網址')     
                 new_image_index = current_row_index
-                next_image_messages = [ImageSendMessage(original_content_url=next_image_urls, preview_image_url=next_image_urls)]
+                next_image_messages = [ImageSendMessage(original_content_url=previous_image_urls, preview_image_url=previous_image_urls)]
             
                 quick_reply_items = [
                     QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
@@ -280,12 +282,12 @@ def handle_message(event):
 
     elif re.match(r'^[A-Za-z]', user_input) and len(user_input) == 8:  # 檢查是否為八字元且為英文開頭
         image_urls = []
-
+        data = sheet.col_values(str('編號'))
         # 尋找符合的圖片編號      
         for row_index,row in enumerate(data):
             if str(user_input) in row[str('編號')]:
-                image_urls.append(row['圖片網址'])
                 current_row_index = row_index
+                image_urls = sheet.row_values(current_row_index)
 
 		# 如果找到符合的圖片網址		   
         if image_urls:
@@ -311,6 +313,12 @@ def handle_message(event):
 
     elif re.match(r'^[A-Za-z]\d{3}$', user_input): # 搜尋集數，得到整集的圖
         matched_data = []
+        data1 = sheet.col_values(str('編號'))
+        data2 = sheet.col_values(str('集數'))
+        data3 = sheet.col_values(str('中字'))
+        data = []
+        data = [data1,data2,data3]
+        
         for row in data:
             if str(user_input) in row[str('集數')]:
                 matched_data.append(f"【{row[str('編號')]}】 {row[str('中字')]}")
@@ -330,6 +338,12 @@ def handle_message(event):
         # 搜尋欄位內容為搜尋條件的橫列
         matched_data = []
         image_urls = []
+        data1 = sheet.col_values(str('編號'))
+        data2 = sheet.col_values(str('成員'))
+        data3 = sheet.col_values(str('主題'))
+        data = []
+        data = [data1,data2,data3]
+
         for row in data:
            # 檢查 "成員" 欄位的值是否可迭代
             if hasattr(row[str('成員')], '__iter__'):
@@ -348,12 +362,17 @@ def handle_message(event):
                 # 如果 "成員" 欄位的值不可迭代，將其轉換為字符串再進行比較
                 if str(search_condition) == str(row[str('主題')]):
                     matched_data.append(row)
+    
 
         if matched_data:
             # 隨機選擇一列資料
             random_row = random.choice(matched_data)
-            image_urls = random_row.get('圖片網址') 
-            new_image_index = data.index(random_row)
+            random_row_number = random_row.get('編號') 
+            cell = sheet.find(random_row_number)
+            row_index = cell.row
+            row_data = sheet.row_values(row_index)
+            image_urls = row_data.get('圖片網址') 
+            new_image_index = data.index(row_index)
 
             image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
 
@@ -376,6 +395,11 @@ def handle_message(event):
 
     else:  #任意文字查詢
         matched_data = []
+
+        data1 = sheet.col_values(str('編號'))
+        data2 = sheet.col_values(str('中字'))
+        data = []
+        data = [data1,data2]
 
     
         for row in data:
