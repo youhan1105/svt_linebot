@@ -17,9 +17,9 @@ from firebase_admin import db
 
 #region #串接憑證
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gs_credentials.json"
-cred = credentials.Certificate("svt-linebot-firebase.json")
+cred = credentials.Certificate("test-firebase-token.json")
 firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://svt-linebot-default-rtdb.asia-southeast1.firebasedatabase.app//'
+    'databaseURL': 'https://test-e2b8b-default-rtdb.asia-southeast1.firebasedatabase.app/'
 })
 #endregion
 
