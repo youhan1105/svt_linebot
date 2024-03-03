@@ -55,7 +55,6 @@ def callback():
     return 'OK'
 #endregion
 
-
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
 
@@ -99,15 +98,15 @@ def handle_message(event):
         "🔢整集列表：\n參考「圖庫收錄集數」清單，輸入「1英文+3數字」，獲得該集圖片清單\n\n選單 》「圖庫相關」\n》點選「圖庫收錄集數」\n》查找特定集數\n》輸入該集的編碼（1英文+3數字）\n》獲得該集圖片清單"
     ],
     "取得編號/上一張/下一張": [
-        "🍒抽指定成員：\n輸入成員各自的emoji，獲得該成員隨機圖片。\n每位成員所對應emoji，可能不只一個。"
+        "📄取得編碼：\n得知目前圖片的編號與關鍵字。\n方便下一次搜尋此圖片，或者藉由編號得知圖片出處\n\n⬆️上一張：\n獲得上一編號的圖片。\n同一集內容、同一位成員，圖片編號會連續。\n\n⬇️下一張：\n獲得下一編號的圖片。\n同一集內容、同一位成員，圖片編號會連續。"
     ],
     "抽特定成員": [
         "🍒抽指定成員：\n\n輸入成員各自的emoji，獲得該成員隨機圖片。\n\n每位成員所對應emoji，可能不只一個。"
     ],
     "主題抽圖": [
-        "💰好想下班：\n輸入「💰」，獲得打工人心聲迷因。",
-        "❤️愛的誇誇：\n輸入「❤️」，獲得正向的句子迷因。",
-        "🍔晚餐吃什麼：\n輸入「🍔」，獲得「肯定」或者「否定」迷因。可以用來決定吃什麼，以及回答是非題。"
+        "💰好想下班：\n輸入「💰」，獲得打工人心聲迷因",
+        "❤️愛的誇誇：\n輸入「❤️」，獲得正向句子的迷因",
+        "🍔晚餐吃什麼：\n輸入「🍔」，獲得「肯定」或者「否定」迷因。可以用來決定吃什麼，以及回答是非題"
     ],
     "成員emoji列表": [
         "S.COUPS：🍒,🦁\n淨漢：🐰,😇,👼🏻,👼\nJoshua：🦌\nJun：🐱\nHoshi：🐯,🐹\n圓佑：🐈‍⬛,🎮,👓\nWOOZI：🍚🍑\nTHE 8：🎱,🐸\n珉奎：🐶,🌻\nDK：⚔️,🍕\n勝寛：🍊,🐻\nVernon：🐻‍❄️,🎧\nDino：🦖,🦦"
@@ -193,7 +192,7 @@ def handle_message(event):
                 )
             ]
         )
-        carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
+        carousel_message = TemplateSendMessage(alt_text='圖文選單', template=carousel_template)
         line_bot_api.reply_message(event.reply_token, carousel_message)
  
     elif user_input == str("圖庫相關"):
@@ -216,7 +215,7 @@ def handle_message(event):
                 
             ]
         )
-        carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
+        carousel_message = TemplateSendMessage(alt_text='圖文選單', template=carousel_template)
         line_bot_api.reply_message(event.reply_token, carousel_message)
 
     elif user_input == str("更多常見問題"):
@@ -252,7 +251,7 @@ def handle_message(event):
                 )
             ]
         )
-        carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
+        carousel_message = TemplateSendMessage(alt_text='圖文選單', template=carousel_template)
         line_bot_api.reply_message(event.reply_token, carousel_message)
 
     elif user_input in user_input_to_reply_message:
@@ -503,4 +502,3 @@ def handle_message(event):
 
 if __name__ == "__main__":
     app.run()
-
