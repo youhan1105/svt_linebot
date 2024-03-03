@@ -55,6 +55,7 @@ def callback():
     return 'OK'
 #endregion
 
+
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
 
@@ -92,9 +93,8 @@ def handle_message(event):
 
     }
  
-  
-       user_input_to_reply_message = {
-        "抽圖/搜尋關鍵字/取得圖片": [
+    user_input_to_reply_message = {
+    "抽圖/搜尋關鍵字/取得圖片": [
         "🎲隨機圖片：\n輸入「抽」，獲得隨機圖片\n\n📸發送圖片：\n輸入編號，獲得指定圖片\n例如輸入：G1140002\n\n🔍搜尋圖片：\n直接輸入關鍵字，出現包含此關鍵字的所有圖片編碼",
         "🔢整集列表：\n參考「圖庫收錄集數」清單，輸入「1英文+3數字」，獲得該集圖片清單\n\n選單 》「圖庫相關」\n》點選「圖庫收錄集數」\n》查找特定集數\n》輸入該集的編碼（1英文+3數字）\n》獲得該集圖片清單"
     ],
@@ -112,25 +112,24 @@ def handle_message(event):
     "成員emoji列表": [
         "S.COUPS：🍒,🦁\n淨漢：🐰,😇,👼🏻,👼\nJoshua：🦌\nJun：🐱\nHoshi：🐯,🐹\n圓佑：🐈‍⬛,🎮,👓\nWOOZI：🍚🍑\nTHE 8：🎱,🐸\n珉奎：🐶,🌻\nDK：⚔️,🍕\n勝寛：🍊,🐻\nVernon：🐻‍❄️,🎧\nDino：🦖,🦦"
     ],
-        "想知道每張圖的Going集數": [
+    "想知道每張圖的Going集數": [
         "取得圖片後，點選下方「取得編號」按鈕。\n編號最前面的「英文字母+三位數字」即為圖片出處。\n\n需對照👉圖庫集數總覽\n\n下方選單→圖庫相關→集數總覽"
     ],
-        "「取得編號」的作用？": [
+    "「取得編號」的作用？": [
         "得知目前圖片的編號與關鍵字。\n方便下一次搜尋此圖片，或者藉由編號得知圖片出處。"
     ],
-        "編碼的數字意義": [
+    "編碼的數字意義": [
         "可分為：\n「開頭1英文+前面3數字」：系列與集數\n「中間2數字」：成員\n「最後2數字」：第幾張圖\n\n詳情參考👉圖庫編碼原則\n\n下方選單→圖庫相關→編碼原則"
     ],
-        "想看到全部的圖": [
+    "想看到全部的圖": [
         "目前想讓使用者體驗隨機抽圖的樂趣😆\n\n之後會將圖片公開於雲端硬碟，\n請再等等！Thanks！"
     ],
-        "克拉嘿可以傳圖片嗎？": [
+    "克拉嘿可以傳圖片嗎？": [
         "可以，你可以傳圖片給機器人。\n\n但並不會觸發任何功能，接下來抽出的圖也不會有關聯🤣"
     ],
-        "電腦可以使用克拉嘿嗎？": [
+    "電腦可以使用克拉嘿嗎？": [
         "可以，電腦版也可以使用～\n\n但電腦版不會出現下方的快速回覆功能，需要手動輸入「抽」"
     ],
-
     }
 
     global current_row_index
@@ -197,26 +196,6 @@ def handle_message(event):
         carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
         line_bot_api.reply_message(event.reply_token, carousel_message)
  
-    elif user_input == str("更多常見問題"):
-        carousel_template = CarouselTemplate(
-            columns=[
-                CarouselColumn(
-                    thumbnail_image_url="https://storage.googleapis.com/seventeen-image/linebot-image/many-qa2.jpg",
-                    text="❓疑難雜症解決專區",
-                    actions=[
-                        MessageAction(label="想知道每張圖的Going集數", text="想知道每張圖的Going集數"),
-                        MessageAction(label="「取得編號」的作用？", text="「取得編號」的作用？"),
-                        MessageAction(label="編碼的數字意義", text="編碼的數字意義"),
-                        MessageAction(label="想看到全部的圖", text="想看到全部的圖"),
-                        MessageAction(label="克拉嘿可以傳圖片嗎？", text="克拉嘿可以傳圖片嗎？"),
-                        MessageAction(label="電腦可以使用克拉嘿嗎？", text="電腦可以使用克拉嘿嗎？")
-                    ]
-                )
-            ]
-        )
-        carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
-        line_bot_api.reply_message(event.reply_token, carousel_message)
-
     elif user_input == str("圖庫相關"):
         carousel_template = CarouselTemplate(
             columns=[
@@ -240,6 +219,26 @@ def handle_message(event):
         carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
         line_bot_api.reply_message(event.reply_token, carousel_message)
 
+    elif user_input == str("更多常見問題"):
+        carousel_template = CarouselTemplate(
+            columns=[
+                CarouselColumn(
+                    thumbnail_image_url="https://storage.googleapis.com/seventeen-image/linebot-image/many-qa2.jpg",
+                    text="❓疑難雜症解決專區",
+                    actions=[
+                        MessageAction(label="想知道每張圖的Going集數", text="想知道每張圖的Going集數"),
+                        MessageAction(label="「取得編號」的作用？", text="「取得編號」的作用？"),
+                        MessageAction(label="編碼的數字意義", text="編碼的數字意義"),
+                        MessageAction(label="想看到全部的圖", text="想看到全部的圖"),
+                        MessageAction(label="克拉嘿可以傳圖片嗎？", text="克拉嘿可以傳圖片嗎？"),
+                        MessageAction(label="電腦可以使用克拉嘿嗎？", text="電腦可以使用克拉嘿嗎？")
+                    ]
+                )
+            ]
+        )
+        carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
+        line_bot_api.reply_message(event.reply_token, carousel_message)
+
     elif user_input == str("聯絡作者"):
         carousel_template = CarouselTemplate(
             columns=[
@@ -255,7 +254,6 @@ def handle_message(event):
         )
         carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
         line_bot_api.reply_message(event.reply_token, carousel_message)
-
 
     elif user_input in user_input_to_reply_message:
         reply_messages = user_input_to_reply_message[user_input]
@@ -505,3 +503,4 @@ def handle_message(event):
 
 if __name__ == "__main__":
     app.run()
+
