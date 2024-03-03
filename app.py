@@ -37,11 +37,9 @@ scope = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis
 creditials = ServiceAccountCredentials.from_json_keyfile_name('gs_credentials.json', scopes=scope)
 client = gspread.authorize(creditials)
 sheet = client.open("SVT-linebot").sheet1
-#endregion
-
-#region #全域變數用於追蹤已發送圖片的索引
 new_image_index = 0
-all_data = 964
+data = None
+data = sheet.get_all_records() 
 #endregion
 
 #region #處理 Line Bot Webhook
@@ -89,11 +87,54 @@ def handle_message(event):
         emoji.emojize("🦖"): "13",
         emoji.emojize("🦦"): "13",
         emoji.emojize("💰"): "工作",
-	emoji.emojize("❤️"): "誇誇",
-	emoji.emojize("🍜"): "吃飯",
+	    emoji.emojize("❤️"): "誇誇",
+	    emoji.emojize("🍜"): "吃飯",
 
     }
  
+    user_input_to_reply_message = {
+    "主題抽圖：愛的誇誇❤️": [
+        ""
+    ],
+    "抽圖/搜尋關鍵字/取得圖片": [
+        "🎲隨機圖片：\n輸入「抽」，獲得隨機圖片\n\n📸發送圖片：\n輸入編號，獲得指定圖片\n例如輸入：G1140002\n\n🔍搜尋圖片：\n直接輸入關鍵字，出現包含此關鍵字的所有圖片編碼"
+    ],
+        "抽圖/搜尋關鍵字/取得圖片": [
+        "🎲隨機圖片：\n輸入「抽」，獲得隨機圖片\n\n📸發送圖片：\n輸入編號，獲得指定圖片\n例如輸入：G1140002\n\n🔍搜尋圖片：\n直接輸入關鍵字，出現包含此關鍵字的所有圖片編碼"
+        "🔢整集列表：\n參考「圖庫收錄集數」清單，輸入「1英文+3數字」，獲得該集圖片清單\n\n選單 》「圖庫相關」\n》點選「圖庫收錄集數」\n》查找特定集數\n》輸入該集的編碼（1英文+3數字）\n》獲得該集圖片清單"
+    ],
+    "取得編號/上一張/下一張": [
+        "🍒抽指定成員：\n輸入成員各自的emoji，獲得該成員隨機圖片。\n每位成員所對應emoji，可能不只一個。"
+    ],
+    "主題抽圖": [
+        "💰好想下班：\n輸入「💰」，獲得打工人心聲迷因。"
+        "❤️愛的誇誇：\n輸入「❤️」，獲得正向的句子迷因。"
+        "🍔晚餐吃什麼：\n輸入「🍔」，獲得「肯定」或者「否定」迷因。可以用來決定吃什麼，以及回答是非題。"
+    ],
+    "成員emoji列表": [
+        "S.COUPS：🍒,🦁\n淨漢：🐰,😇,👼🏻,👼\nJoshua：🦌\nJun：🐱\nHoshi：🐯,🐹\n圓佑：🐈‍⬛,🎮,👓\nWOOZI：🍚🍑\nTHE 8：🎱,🐸\n珉奎：🐶,🌻\nDK：⚔️,🍕\n勝寛：🍊,🐻\nVernon：🐻‍❄️,🎧\nDino：🦖,🦦"
+    ],
+        "想知道每張圖的Going集數": [
+        "取得圖片後，點選下方「取得編號」按鈕。\n編號最前面的「英文字母+三位數字」即為圖片出處。\n\n需對照👉圖庫集數總覽\n\n下方選單→圖庫相關→集數總覽"
+    ],
+        "「取得編號」的作用？": [
+        "得知目前圖片的編號與關鍵字。\n方便下一次搜尋此圖片，或者藉由編號得知圖片出處。"
+    ],
+        "編碼的數字意義": [
+        "可分為：\n「開頭1英文+前面3數字」：系列與集數\n「中間2數字」：成員\n「最後2數字」：第幾張圖\n\n詳情參考👉圖庫編碼原則\n\n下方選單→圖庫相關→編碼原則"
+    ],
+        "想看到全部的圖": [
+        "目前想讓使用者體驗隨機抽圖的樂趣😆\n\n之後會將圖片公開於雲端硬碟，\n請再等等！Thanks！"
+    ],
+        "克拉嘿可以傳圖片嗎？": [
+        "可以，你可以傳圖片給機器人。\n\n但並不會觸發任何功能，接下來抽出的圖也不會有關聯🤣"
+    ],
+        "電腦可以使用克拉嘿嗎？": [
+        "可以，電腦版也可以使用～\n\n但電腦版不會出現下方的快速回覆功能，需要手動輸入「抽」"
+    ],
+
+    }
+
     global current_row_index
     global new_image_index
     user_id = event.source.user_id
@@ -122,24 +163,55 @@ def handle_message(event):
         carousel_template = CarouselTemplate(
             columns=[
                 CarouselColumn(
-                    thumbnail_image_url="https://storage.googleapis.com/line-carat-hey-image/image/01.jpg",
-                    text="本機器人詳細功能說明",
+                    thumbnail_image_url="https://storage.googleapis.com/seventeen-image/linebot-image/many-new.jpg",
+                    text="24/03 最新功能",
                     actions=[
-                        MessageAction(label="抽圖/搜尋關鍵字/特定圖片", text="抽圖/搜尋關鍵字/特定圖片")
+                        MessageAction(label="主題抽圖：愛的誇誇❤️", text="主題抽圖：愛的誇誇❤️"),
+                        MessageAction(label="主題抽圖：晚餐吃什麼🍔", text="主題抽圖：晚餐吃什麼🍔")
                     ]
                 ),
                 CarouselColumn(
-                    thumbnail_image_url="https://storage.googleapis.com/line-carat-hey-image/image/02.jpg",
-                    text="已收錄的集數清單及編號",
+                    thumbnail_image_url="https://storage.googleapis.com/seventeen-image/linebot-image/many-basic.jpg",
+                    text="👀新加入的克拉看這裡！",
                     actions=[
-                        URIAction(label="圖庫收錄集數", uri="https://linecarathey.wixsite.com/line-carat-hey/episode")
+                        MessageAction(label="抽圖/搜尋關鍵字/取得圖片", text="抽圖/搜尋關鍵字/取得圖片"),
+                        MessageAction(label="取得編號/上一張/下一張", text="取得編號/上一張/下一張")
                     ]
                 ),
                 CarouselColumn(
-                    thumbnail_image_url="https://storage.googleapis.com/line-carat-hey-image/image/03.jpg",
-                    text="系列+集數+成員+第幾張",
+                    thumbnail_image_url="https://storage.googleapis.com/seventeen-image/linebot-image/many-adv.jpg",
+                    text="💖如何抽出更符合心意的圖？",
                     actions=[
-                        URIAction(label="編碼說明", uri="https://linecarathey.wixsite.com/line-carat-hey/rules")
+                        MessageAction(label="抽特定成員", text="抽特定成員"),
+                        MessageAction(label="主題抽圖", text="主題抽圖")                        
+                    ]
+                ),
+                CarouselColumn(
+                    thumbnail_image_url="https://storage.googleapis.com/seventeen-image/linebot-image/many-qa.jpg",
+                    text="❓疑難雜症解決專區",
+                    actions=[
+                        MessageAction(label="成員emoji列表", text="成員emoji列表"),
+                        MessageAction(label="點這裡看更多⋯", text="更多常見問題")                           
+                    ]
+                )
+            ]
+        )
+        carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
+        line_bot_api.reply_message(event.reply_token, carousel_message)
+ 
+    elif user_input == str("更多常見問題"):
+        carousel_template = CarouselTemplate(
+            columns=[
+                CarouselColumn(
+                    thumbnail_image_url="https://storage.googleapis.com/seventeen-image/linebot-image/many-qa2.jpg",
+                    text="❓疑難雜症解決專區",
+                    actions=[
+                        MessageAction(label="想知道每張圖的Going集數", text="想知道每張圖的Going集數"),
+                        MessageAction(label="「取得編號」的作用？", text="「取得編號」的作用？"),
+                        MessageAction(label="編碼的數字意義", text="編碼的數字意義"),
+                        MessageAction(label="想看到全部的圖", text="想看到全部的圖"),
+                        MessageAction(label="克拉嘿可以傳圖片嗎？", text="克拉嘿可以傳圖片嗎？"),
+                        MessageAction(label="電腦可以使用克拉嘿嗎？", text="電腦可以使用克拉嘿嗎？")
                     ]
                 )
             ]
@@ -147,10 +219,49 @@ def handle_message(event):
         carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
         line_bot_api.reply_message(event.reply_token, carousel_message)
 
-    elif user_input == str("抽圖/搜尋關鍵字/特定圖片"):
-        reply_message1 = "🎲隨機圖片：\n輸入「抽」，獲得隨機圖片\n\n🍒抽指定成員：\n輸入成員各自的emoji，獲得該成員隨機圖片\n\n📸發送圖片：\n輸入編號（不含括號），獲得指定圖片\n如：G1140002\n\n🔍搜尋圖片：\n直接輸入關鍵字，出現包含此關鍵字的所有圖片編碼"        
-        reply_message2 = "🔢整集列表：\n參考「圖庫收錄集數」清單，輸入「1英文+3數字」，獲得該集圖片清單\n\n選單 》「完整功能」\n》點選「圖庫收錄集數」\n》查找特定集數\n》輸入該集的編碼（1英文+3數字）\n》獲得該集圖片清單"                
-        line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=reply_message1),TextSendMessage(text=reply_message2)])
+    elif user_input == str("圖庫相關"):
+        carousel_template = CarouselTemplate(
+            columns=[
+                CarouselColumn(
+                    thumbnail_image_url="https://storage.googleapis.com/seventeen-image/linebot-image/many-ep.jpg",
+                    text="🔠已收錄的集數與對應編號",
+                    actions=[
+                            URIAction(label="圖庫收錄集數", uri="https://linecarathey.wixsite.com/line-carat-hey/episode")
+                    ]
+                ),
+                CarouselColumn(
+                    thumbnail_image_url="https://storage.googleapis.com/seventeen-image/linebot-image/many-num.jpg",
+                    text="📝系列+集數+成員+第幾張",
+                    actions=[
+                            URIAction(label="編碼說明", uri="https://linecarathey.wixsite.com/line-carat-hey/rules")
+                    ]
+                )
+                
+            ]
+        )
+        carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
+        line_bot_api.reply_message(event.reply_token, carousel_message)
+
+    elif user_input == str("聯絡作者"):
+        carousel_template = CarouselTemplate(
+            columns=[
+                CarouselColumn(
+                    thumbnail_image_url="https://storage.googleapis.com/seventeen-image/linebot-image/many-contact.jpg",
+                    actions=[
+                            URIAction(label="錯誤回報", uri="https://forms.gle/YhhYvoYomCXGbwoq5"),
+                            URIAction(label="許願池", uri="https://forms.gle/endRDk4AWcAHvLVH6"),
+                            URIAction(label="其他聯絡", text="其他事項聯絡我，請寄email!\n\nLine.Carat.Hey@gmail.com")
+                    ]
+                )
+            ]
+        )
+        carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
+        line_bot_api.reply_message(event.reply_token, carousel_message)
+
+
+    elif user_input in user_input_to_reply_message:
+        reply_messages = user_input_to_reply_message[user_input]
+        line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=message) for message in reply_messages])
 
     elif user_input == str("圖庫收錄集數"):
 
@@ -170,11 +281,9 @@ def handle_message(event):
 
     elif user_input == str('抽'):
         image_urls = []
-        random_row = []
-        random_row_index = random.randint(1, all_data)
-        random_row = sheet.row_values(random_row_index)  
-        image_urls = random_row[3]
-        new_image_index = random_row_index 
+        random_row = random.choice(data)  
+        image_urls = random_row.get('圖片網址')  
+        new_image_index = data.index(random_row) 
         image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
     
         quick_reply_items = [
@@ -191,9 +300,8 @@ def handle_message(event):
 
     elif user_input == str('取得編號'):
         if current_row_index is not None:
-            if current_row_index < len(all_data):
-                current_row = []
-                current_row = sheet.row_values(current_row_index)
+            if current_row_index < len(data):
+                current_row = data[current_row_index]
                 image_number = current_row.get('編號')
                 image_name = current_row.get('中字')
 
@@ -218,9 +326,10 @@ def handle_message(event):
         if current_row_index is not None:
             current_row_index += 1
 
-            if current_row_index < len(all_data):
-                next_row = sheet.row_values(current_row_index)
-                next_image_urls = next_row.get('圖片網址')
+            if current_row_index < len(data):
+                next_row = data[current_row_index]
+                next_image_urls = next_row.get('圖片網址')     
+                current_row_index = data.index(next_row) 
                 new_image_index = current_row_index
                 next_image_messages = [ImageSendMessage(original_content_url=next_image_urls, preview_image_url=next_image_urls)]
             
@@ -252,10 +361,11 @@ def handle_message(event):
             current_row_index -= 1
 
             if current_row_index >= 0:
-                previous_row = sheet.row_values(current_row_index)
-                previous_image_urls = previous_row.get('圖片網址')     
+                next_row = data[current_row_index]
+                next_image_urls = next_row.get('圖片網址')     
+                current_row_index = data.index(next_row) 
                 new_image_index = current_row_index
-                next_image_messages = [ImageSendMessage(original_content_url=previous_image_urls, preview_image_url=previous_image_urls)]
+                next_image_messages = [ImageSendMessage(original_content_url=next_image_urls, preview_image_url=next_image_urls)]
             
                 quick_reply_items = [
                     QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
@@ -282,12 +392,12 @@ def handle_message(event):
 
     elif re.match(r'^[A-Za-z]', user_input) and len(user_input) == 8:  # 檢查是否為八字元且為英文開頭
         image_urls = []
-        data = sheet.col_values(str('編號'))
+
         # 尋找符合的圖片編號      
         for row_index,row in enumerate(data):
             if str(user_input) in row[str('編號')]:
+                image_urls.append(row['圖片網址'])
                 current_row_index = row_index
-                image_urls = sheet.row_values(current_row_index)
 
 		# 如果找到符合的圖片網址		   
         if image_urls:
@@ -313,12 +423,6 @@ def handle_message(event):
 
     elif re.match(r'^[A-Za-z]\d{3}$', user_input): # 搜尋集數，得到整集的圖
         matched_data = []
-        data1 = sheet.col_values(str('編號'))
-        data2 = sheet.col_values(str('集數'))
-        data3 = sheet.col_values(str('中字'))
-        data = []
-        data = [data1,data2,data3]
-        
         for row in data:
             if str(user_input) in row[str('集數')]:
                 matched_data.append(f"【{row[str('編號')]}】 {row[str('中字')]}")
@@ -338,12 +442,6 @@ def handle_message(event):
         # 搜尋欄位內容為搜尋條件的橫列
         matched_data = []
         image_urls = []
-        data1 = sheet.col_values(str('編號'))
-        data2 = sheet.col_values(str('成員'))
-        data3 = sheet.col_values(str('主題'))
-        data = []
-        data = [data1,data2,data3]
-
         for row in data:
            # 檢查 "成員" 欄位的值是否可迭代
             if hasattr(row[str('成員')], '__iter__'):
@@ -362,17 +460,12 @@ def handle_message(event):
                 # 如果 "成員" 欄位的值不可迭代，將其轉換為字符串再進行比較
                 if str(search_condition) == str(row[str('主題')]):
                     matched_data.append(row)
-    
 
         if matched_data:
             # 隨機選擇一列資料
             random_row = random.choice(matched_data)
-            random_row_number = random_row.get('編號') 
-            cell = sheet.find(random_row_number)
-            row_index = cell.row
-            row_data = sheet.row_values(row_index)
-            image_urls = row_data.get('圖片網址') 
-            new_image_index = data.index(row_index)
+            image_urls = random_row.get('圖片網址') 
+            new_image_index = data.index(random_row)
 
             image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
 
@@ -395,11 +488,6 @@ def handle_message(event):
 
     else:  #任意文字查詢
         matched_data = []
-
-        data1 = sheet.col_values(str('編號'))
-        data2 = sheet.col_values(str('中字'))
-        data = []
-        data = [data1,data2]
 
     
         for row in data:
