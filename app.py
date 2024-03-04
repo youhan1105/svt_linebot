@@ -129,6 +129,10 @@ def handle_message(event):
     "電腦可以使用克拉嘿嗎？": [
         "可以，電腦版也可以使用～\n\n但電腦版不會出現下方的快速回覆功能，需要手動輸入「抽」"
     ],
+    "其他聯絡": [
+        "其他事項聯絡我，請寄email!",
+        "Line.Carat.Hey@gmail.com"
+    ],
     }
 
     global current_row_index
@@ -212,7 +216,7 @@ def handle_message(event):
                 )
             ]
         )
-        carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
+        carousel_message = TemplateSendMessage(alt_text='圖文選單', template=carousel_template)
         line_bot_api.reply_message(event.reply_token, carousel_message)
 
     elif user_input == str("聯絡作者"):
@@ -223,7 +227,7 @@ def handle_message(event):
                     actions=[
                             URIAction(label="錯誤回報", uri="https://forms.gle/YhhYvoYomCXGbwoq5"),
                             URIAction(label="許願池", uri="https://forms.gle/endRDk4AWcAHvLVH6"),
-                            URIAction(label="其他聯絡", text="其他事項聯絡我，請寄email!\n\nLine.Carat.Hey@gmail.com")
+                            MessageAction(label="其他聯絡", text="其他聯絡")
                     ]
                 )
             ]
