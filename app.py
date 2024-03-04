@@ -194,30 +194,7 @@ def handle_message(event):
         )
         carousel_message = TemplateSendMessage(alt_text='圖文選單', template=carousel_template)
         line_bot_api.reply_message(event.reply_token, carousel_message)
- 
-    elif user_input == str("圖庫相關"):
-        carousel_template = CarouselTemplate(
-            columns=[
-                CarouselColumn(
-                    thumbnail_image_url="https://storage.googleapis.com/seventeen-image/linebot-image/many-ep.jpg",
-                    text="🔠已收錄的集數與對應編號",
-                    actions=[
-                            URIAction(label="圖庫收錄集數", uri="https://linecarathey.wixsite.com/line-carat-hey/episode")
-                    ]
-                ),
-                CarouselColumn(
-                    thumbnail_image_url="https://storage.googleapis.com/seventeen-image/linebot-image/many-num.jpg",
-                    text="📝系列+集數+成員+第幾張",
-                    actions=[
-                            URIAction(label="編碼說明", uri="https://linecarathey.wixsite.com/line-carat-hey/rules")
-                    ]
-                )
-                
-            ]
-        )
-        carousel_message = TemplateSendMessage(alt_text='圖文選單', template=carousel_template)
-        line_bot_api.reply_message(event.reply_token, carousel_message)
-
+    
     elif user_input == str("更多常見問題"):
         carousel_template = CarouselTemplate(
             columns=[
@@ -254,25 +231,32 @@ def handle_message(event):
         carousel_message = TemplateSendMessage(alt_text='圖文選單', template=carousel_template)
         line_bot_api.reply_message(event.reply_token, carousel_message)
 
-    elif user_input in user_input_to_reply_message:
-        reply_messages = user_input_to_reply_message[user_input]
-        line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=message) for message in reply_messages])
-
-    elif user_input == str("圖庫收錄集數"):
-
+    elif user_input == str("圖庫相關"):
         carousel_template = CarouselTemplate(
             columns=[
                 CarouselColumn(
-                    thumbnail_image_url="https://i.imgur.com/A3XvDnd.jpg",
-                    text="已收錄集數清單及編號",
+                    thumbnail_image_url="https://storage.googleapis.com/seventeen-image/linebot-image/many-ep.jpg",
+                    text="🔠已收錄的集數與對應編號",
                     actions=[
-                        URIAction(label="已收錄集數", uri="https://linecarathey.wixsite.com/line-carat-hey/episode")
+                            URIAction(label="圖庫收錄集數", uri="https://linecarathey.wixsite.com/line-carat-hey/episode")
+                    ]
+                ),
+                CarouselColumn(
+                    thumbnail_image_url="https://storage.googleapis.com/seventeen-image/linebot-image/many-num.jpg",
+                    text="📝系列+集數+成員+第幾張",
+                    actions=[
+                            URIAction(label="編碼說明", uri="https://linecarathey.wixsite.com/line-carat-hey/rules")
                     ]
                 )
+                
             ]
         )
-        carousel_message = TemplateSendMessage(alt_text='Carousel template', template=carousel_template)
+        carousel_message = TemplateSendMessage(alt_text='圖文選單', template=carousel_template)
         line_bot_api.reply_message(event.reply_token, carousel_message)
+
+    elif user_input in user_input_to_reply_message:
+        reply_messages = user_input_to_reply_message[user_input]
+        line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=message) for message in reply_messages])
 
     elif user_input == str('抽'):
         image_urls = []
