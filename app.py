@@ -215,6 +215,12 @@ def handle_message(event):
                         MessageAction(label="想知道每張圖的Going集數", text="想知道每張圖的Going集數"),
                         MessageAction(label="「取得編號」的作用？", text="「取得編號」的作用？"),
                         MessageAction(label="編碼的數字意義", text="編碼的數字意義"),
+                    ]
+                ),
+                CarouselColumn(
+                    thumbnail_image_url="https://storage.googleapis.com/seventeen-image/linebot-image/many-qa2.jpg",
+                    text="常見問題看這邊",
+                    actions=[
                         MessageAction(label="想看到全部的圖", text="想看到全部的圖"),
                         MessageAction(label="克拉嘿可以傳圖片嗎？", text="克拉嘿可以傳圖片嗎？"),
                         MessageAction(label="電腦可以使用克拉嘿嗎？", text="電腦可以使用克拉嘿嗎？")
