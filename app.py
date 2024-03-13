@@ -162,7 +162,12 @@ def handle_message(event):
     if not isinstance(user_image_index, int):
         user_image_index = 0
 
+    if 'silent_mode' not in user_data:
+        user_data['silent_mode'] = 0
+
     user_image_index = user_data.get('user_image_index', 0 )
+    
+    
     current_row_index = user_image_index
 	
     if user_input == str("完整功能"):
@@ -271,6 +276,19 @@ def handle_message(event):
         carousel_message = TemplateSendMessage(alt_text='圖文選單', template=carousel_template)
         line_bot_api.reply_message(event.reply_token, carousel_message)
 
+    elif user_input == str("小樹洞模式：ON"):
+        user_ref.update({'silent_mode': 1})
+        
+        text_message = TextSendMessage(text=f"小樹洞模式已開啟/n/n接下來，你輸入的關鍵字，若於圖庫中無符合的圖片，將不再回傳「無符合的資料」")
+        line_bot_api.reply_message(event.reply_token, text_message)
+
+    elif user_input == str("小樹洞模式：OFF"):
+        user_ref.update({'silent_mode': 0})
+        
+        text_message = TextSendMessage(text=f"小樹洞模式已關閉/n/n接下來，你輸入的關鍵字，將在圖庫中搜尋，若無符合的資料，將回傳「無符合的資料」")
+        line_bot_api.reply_message(event.reply_token, text_message)
+
+
     elif user_input in user_input_to_reply_message:
         reply_messages = user_input_to_reply_message[user_input]
         line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=message) for message in reply_messages])
@@ -316,7 +334,6 @@ def handle_message(event):
                 line_bot_api.reply_message(event.reply_token, text_message)
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="請先抽圖片"))
-            print('current_row_index-4:',current_row_index)
 
     elif user_input == str("下一張"):
         if current_row_index is not None:
@@ -496,10 +513,11 @@ def handle_message(event):
             reply_message += "\n".join(matched_data)
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
         else:
-            reply_message = "無符合的資料"
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
+            if user_data['silent_mode'] == 0:
+                reply_message = "無符合的資料"
+                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
 
-    ref.child(user_id).update({'user_image_index': new_image_index})
+    user_ref.update(user_data)
 
 if __name__ == "__main__":
     app.run()
