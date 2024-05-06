@@ -318,6 +318,7 @@ def handle_message(event):
 
         if isinstance(reply_messages, list):
             for message in reply_messages:
+                print("Type of message:", type(message))
                 message.quick_reply = quick_reply
         else:
             print("Type of reply_messages:", type(reply_messages))
