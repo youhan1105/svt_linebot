@@ -88,7 +88,7 @@ def handle_message(event):
         emoji.emojize("🦦"): "13",
         emoji.emojize("💰"): "工作",
 	    emoji.emojize("❤️"): "誇誇",
-	    emoji.emojize("🍜"): "吃飯",
+	    emoji.emojize("❓"): "問答",
 
     }
  
@@ -98,15 +98,15 @@ def handle_message(event):
         "🔢整集列表：\n參考「圖庫收錄集數」清單，輸入「1英文+3數字」，獲得該集圖片清單\n\n選單 》「圖庫相關」\n》點選「圖庫收錄集數」\n》查找特定集數\n》輸入該集的編碼（1英文+3數字）\n》獲得該集圖片清單"
     ],
     "取得編號/上一張/下一張": [
-        "📄取得編碼：\n得知目前圖片的編號與關鍵字。\n方便下一次搜尋此圖片，或者藉由編號得知圖片出處\n\n⬆️上一張：\n獲得上一編號的圖片。\n同一集內容、同一位成員，圖片編號會連續。\n\n⬇️下一張：\n獲得下一編號的圖片。\n同一集內容、同一位成員，圖片編號會連續。"
+        "📄取得編碼：\n得知目前圖片的編號與關鍵字\n方便下一次搜尋此圖片，或者藉由編號得知圖片出處\n\n⬆️上一張：\n獲得上一編號的圖片。\n同一集內容、同一位成員，圖片編號會連續 \n\n⬇️下一張：\n獲得下一編號的圖片。\n同一集內容、同一位成員，圖片編號會連續"
     ],
     "抽特定成員": [
-        "🍒抽指定成員：\n\n輸入成員各自的emoji，獲得該成員隨機圖片。\n\n每位成員所對應emoji，可能不只一個。"
+        "🍒抽指定成員：\n\n輸入成員各自的emoji，獲得該成員隨機圖片\n\n每位成員所對應emoji，可能不只一個"
     ],
     "主題抽圖": [
         "💰好想下班：\n輸入「💰」，獲得打工人心聲迷因",
         "❤️愛的誇誇：\n輸入「❤️」，獲得正向句子的迷因",
-        "🍔晚餐吃什麼：\n輸入「🍔」，獲得「肯定」、「否定」，或吃飯主題迷因。\n可以用來決定吃什麼，以及回答是非題"
+        "❓人生光明燈：\n輸入「❓」，獲得「肯定」或者「否定」迷因。幫助有選擇障礙的你，建議詢問是非題"
     ],
     "成員emoji列表": [
         "S.COUPS：🍒,🦁\n淨漢：🐰,😇,👼🏻,👼\nJoshua：🦌\nJun：🐱\nHoshi：🐯,🐹\n圓佑：🐈‍⬛,🎮,👓\nWOOZI：🍚🍑\nTHE 8：🎱,🐸\n珉奎：🐶,🌻\nDK：⚔️,🍕\n勝寛：🍊,🐻\nVernon：🐻‍❄️,🎧\nDino：🦖,🦦"
@@ -124,10 +124,10 @@ def handle_message(event):
         "目前想讓使用者體驗隨機抽圖的樂趣😆\n\n之後會將圖片公開於雲端硬碟，\n請再等等！Thanks！"
     ],
     "克拉嘿可以傳圖片嗎？": [
-        "可以，你可以傳圖片給機器人。\n\n但並不會觸發任何功能，接下來抽出的圖也不會有關聯🤣"
+        "可以！你可以傳圖片給機器人。\n\n但並不會觸發任何功能，接下來抽出的圖也不會有關聯🤣"
     ],
     "電腦可以使用克拉嘿嗎？": [
-        "可以，電腦版也可以使用～\n\n但電腦版不會出現下方的快速回覆功能，需要手動輸入「抽」"
+        "可以！電腦版也可以使用～\n\n但電腦版不會出現下方的快速回覆功能，需要手動輸入「抽」"
     ],
     "其他聯絡": [
         "其他事項聯絡我，請寄email!",
@@ -138,7 +138,12 @@ def handle_message(event):
     ],
     "主題抽圖：晚餐吃什麼🍔": [
         "🍔晚餐吃什麼：\n輸入「🍔」，獲得「肯定」、「否定」，或吃飯主題迷因。\n可以用來決定吃什麼，以及回答是非題"
-    ],    
+    ], 
+    "雲端圖庫": [
+        "此機器人與圖庫皆為無償提供><\n若想與朋友分享圖庫：\n⭕️請邀請他們加入此帳號好友 \n❌請勿直接在社群媒體上分享下方連結",
+        "https://drive.google.com/drive/folders/1DjWUkrqe-W-6_TLMyT8Yx95okt3lRcvg?usp=share_link"    
+        ], 
+
     }
 
     global current_row_index
@@ -175,10 +180,10 @@ def handle_message(event):
             columns=[
                 CarouselColumn(
                     thumbnail_image_url="https://storage.googleapis.com/seventeen-image/linebot-image/many-new.jpg",
-                    text="24/03 最新功能",
+                    text="24/05 最新功能",
                     actions=[
                         MessageAction(label="主題抽圖：愛的誇誇❤️", text="主題抽圖：愛的誇誇❤️"),
-                        MessageAction(label="主題抽圖：晚餐吃什麼🍔", text="主題抽圖：晚餐吃什麼🍔")
+                        MessageAction(label="主題抽圖： 人生光明燈❓", text="主題抽圖： 人生光明燈❓")
                     ]
                 ),
                 CarouselColumn(
@@ -269,24 +274,19 @@ def handle_message(event):
                     actions=[
                             URIAction(label="編碼說明", uri="https://linecarathey.wixsite.com/line-carat-hey/rules")
                     ]
+                ),
+                CarouselColumn(
+                    thumbnail_image_url="https://storage.googleapis.com/seventeen-image/linebot-image/many-download.jpg",
+                    text="☁️收錄圖片一次看！",
+                    actions=[
+                            MessageAction(label="雲端圖庫", text="雲端圖庫")
+                    ]
                 )
                 
             ]
         )
         carousel_message = TemplateSendMessage(alt_text='圖文選單', template=carousel_template)
         line_bot_api.reply_message(event.reply_token, carousel_message)
-
-    elif user_input == str("小樹洞模式：ON"):
-        user_ref.update({'silent_mode': 1})
-        
-        text_message = TextSendMessage(text=f"小樹洞模式已開啟/n/n接下來，你輸入的關鍵字，若於圖庫中無符合的圖片，將不再回傳「無符合的資料」")
-        line_bot_api.reply_message(event.reply_token, text_message)
-
-    elif user_input == str("小樹洞模式：OFF"):
-        user_ref.update({'silent_mode': 0})
-        
-        text_message = TextSendMessage(text=f"小樹洞模式已關閉/n/n接下來，你輸入的關鍵字，將在圖庫中搜尋，若無符合的資料，將回傳「無符合的資料」")
-        line_bot_api.reply_message(event.reply_token, text_message)
 
 
     elif user_input in user_input_to_reply_message:
