@@ -291,50 +291,8 @@ def handle_message(event):
 
     elif user_input in user_input_to_reply_message:
         reply_messages = user_input_to_reply_message[user_input]
-
-        if user_input == str('抽特定成員'):
-            quick_reply_items = [
-            QuickReplyButton(action=MessageAction(label='成員emoji列表', text='成員emoji列表'))
-            ]
-
-        if user_input == str('主題抽圖：愛的誇誇❤️'):
-            quick_reply_items = [
-            QuickReplyButton(action=MessageAction(label='❤️', text='❤️'))
-            ]
-
-        if user_input == str('主題抽圖： 人生光明燈❓'):
-            quick_reply_items = [
-            QuickReplyButton(action=MessageAction(label='❓', text='❓'))
-            ]
-
-        if user_input == str('主題抽圖'):
-            quick_reply_items = [
-            QuickReplyButton(action=MessageAction(label='💰', text='💰')),
-            QuickReplyButton(action=MessageAction(label='❤️', text='❤️')),
-            QuickReplyButton(action=MessageAction(label='❓', text='❓'))
-            ]
-
-        quick_reply = QuickReply(items=quick_reply_items)
-
-        if isinstance(reply_messages, list):
-            messages = []
-            for message in reply_messages:
-                if isinstance(message, str):
-                    # 如果 message 是字符串，則轉換為 TextSendMessage 物件
-                    messages.append(TextSendMessage(text=message))
-                else:
-                    messages.append(message)
-            # 設置 quick_reply
-            for message in messages:
-                message.quick_reply = quick_reply
-        else:
-            if isinstance(reply_messages, str):
-                # 如果 reply_messages 是字符串，則轉換為 TextSendMessage 物件
-                reply_messages = TextSendMessage(text=reply_messages)
-            # 設置 quick_reply
-            reply_messages.quick_reply = quick_reply
-
         line_bot_api.reply_message(event.reply_token, reply_messages)
+	    
 
     elif user_input == str('抽'):
         image_urls = []
