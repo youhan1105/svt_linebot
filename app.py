@@ -140,7 +140,7 @@ def handle_message(event):
         "輸入「❓」，隨機獲得「肯定」或者「否定」迷因，以此幫助有選擇障礙的你！\n p.s.建議詢問是非題"
     ], 
     "雲端圖庫": [
-        "此機器人與圖庫皆為無償提供><\n若想與朋友分享圖庫：\n⭕️請邀請他們加入此帳號好友 \n❌請勿直接在社群媒體上分享下方連結",
+        "此機器人與圖庫皆為無償提供><\n\n若想與朋友分享圖庫：\n⭕️邀請他們加入此官方帳號 \n❌請勿直接在社群媒體上分享下方連結",
         "https://drive.google.com/drive/folders/1DjWUkrqe-W-6_TLMyT8Yx95okt3lRcvg?usp=share_link"    
         ], 
 
@@ -296,25 +296,16 @@ def handle_message(event):
             quick_reply_items = [
             QuickReplyButton(action=MessageAction(label='成員emoji列表', text='成員emoji列表'))
             ]
-            quick_reply = QuickReply(items=quick_reply_items)
-            for image_message in image_messages:
-                image_message.quick_reply = quick_reply
 
         if user_input == str('主題抽圖：愛的誇誇❤️'):
             quick_reply_items = [
             QuickReplyButton(action=MessageAction(label='❤️', text='❤️'))
             ]
-            quick_reply = QuickReply(items=quick_reply_items)
-            for image_message in image_messages:
-                image_message.quick_reply = quick_reply
 
         if user_input == str('主題抽圖： 人生光明燈❓'):
             quick_reply_items = [
             QuickReplyButton(action=MessageAction(label='❓', text='❓'))
             ]
-            quick_reply = QuickReply(items=quick_reply_items)
-            for image_message in image_messages:
-                image_message.quick_reply = quick_reply
 
         if user_input == str('主題抽圖'):
             quick_reply_items = [
@@ -322,10 +313,10 @@ def handle_message(event):
             QuickReplyButton(action=MessageAction(label='❤️', text='❤️')),
             QuickReplyButton(action=MessageAction(label='❓', text='❓'))
             ]
-            quick_reply = QuickReply(items=quick_reply_items)
-            for image_message in image_messages:
-                image_message.quick_reply = quick_reply
 
+        quick_reply = QuickReply(items=quick_reply_items)
+        for image_message in image_messages:
+            image_message.quick_reply = quick_reply
 
         line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=message) for message in reply_messages])
 
