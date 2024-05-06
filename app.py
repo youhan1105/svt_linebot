@@ -167,8 +167,8 @@ def handle_message(event):
     if not isinstance(user_image_index, int):
         user_image_index = 0
 
-    if 'silent_mode' not in user_data:
-        user_data['silent_mode'] = 0
+    if 'history' not in user_data:
+        user_data['history'] = 0
 
     user_image_index = user_data.get('user_image_index', 0 )
     
@@ -292,7 +292,6 @@ def handle_message(event):
     elif user_input in user_input_to_reply_message:
         reply_messages = user_input_to_reply_message[user_input]
         line_bot_api.reply_message(event.reply_token, reply_messages)
-	    
 
     elif user_input == str('抽'):
         image_urls = []
@@ -526,15 +525,9 @@ def handle_message(event):
             if str(user_input) in row[str('中字')]:
                 matched_data.append(f"【{row[str('編號')]}】 {row[str('中字')]}")
     
-    
-        if matched_data:
             reply_message = "【Gxxx13xx】此數為成員編號\n＊輸入編號時請去掉括號＊\n\n"
             reply_message += "\n".join(matched_data)
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
-        else:
-            if user_data['silent_mode'] == 0:
-                reply_message = "無符合的資料"
-                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
 
     user_ref.update(user_data)
 
