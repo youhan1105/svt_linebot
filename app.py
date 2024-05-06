@@ -291,7 +291,7 @@ def handle_message(event):
 
     elif user_input in user_input_to_reply_message:
         reply_messages = user_input_to_reply_message[user_input]
-        line_bot_api.reply_message(event.reply_token, reply_messages)
+        line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=message) for message in reply_messages])
 
     elif user_input == str('抽'):
         image_urls = []
