@@ -491,13 +491,13 @@ def handle_message(event):
                 if str(search_condition) == str(row[str('成員')]):
                     matched_data.append(row)
         for row in data:
-           # 檢查 "成員" 欄位的值是否可迭代
-            if hasattr(row[str('主題')], '__iter__'):
-                if str(search_condition) in row[str('主題')]:
+            # 檢查 "主題" 和 "主題2" 欄位的值是否可迭代
+            if hasattr(row[str('主題')], '__iter__') or hasattr(row[str('主題2')], '__iter__'):
+                if str(search_condition) in row[str('主題')] or str(search_condition) in row[str('主題2')]:
                     matched_data.append(row)
             else:
-                # 如果 "成員" 欄位的值不可迭代，將其轉換為字符串再進行比較
-                if str(search_condition) == str(row[str('主題')]):
+                # 如果 "主題" 和 "主題2" 欄位的值不可迭代，將其轉換為字符串再進行比較
+                if str(search_condition) == str(row[str('主題')]) or str(search_condition) == str(row[str('主題2')]):
                     matched_data.append(row)
 
         if matched_data:
