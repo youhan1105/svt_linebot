@@ -291,7 +291,45 @@ def handle_message(event):
 
     elif user_input in user_input_to_reply_message:
         reply_messages = user_input_to_reply_message[user_input]
+
+        if user_input == str('抽特定成員'):
+            quick_reply_items = [
+            QuickReplyButton(action=MessageAction(label='成員emoji列表', text='成員emoji列表'))
+            ]
+            quick_reply = QuickReply(items=quick_reply_items)
+            for image_message in image_messages:
+                image_message.quick_reply = quick_reply
+
+        if user_input == str('主題抽圖：愛的誇誇❤️'):
+            quick_reply_items = [
+            QuickReplyButton(action=MessageAction(label='❤️', text='❤️'))
+            ]
+            quick_reply = QuickReply(items=quick_reply_items)
+            for image_message in image_messages:
+                image_message.quick_reply = quick_reply
+
+        if user_input == str('主題抽圖： 人生光明燈❓'):
+            quick_reply_items = [
+            QuickReplyButton(action=MessageAction(label='❓', text='❓'))
+            ]
+            quick_reply = QuickReply(items=quick_reply_items)
+            for image_message in image_messages:
+                image_message.quick_reply = quick_reply
+
+        if user_input == str('主題抽圖'):
+            quick_reply_items = [
+            QuickReplyButton(action=MessageAction(label='💰', text='💰')),
+            QuickReplyButton(action=MessageAction(label='❤️', text='❤️')),
+            QuickReplyButton(action=MessageAction(label='❓', text='❓'))
+            ]
+            quick_reply = QuickReply(items=quick_reply_items)
+            for image_message in image_messages:
+                image_message.quick_reply = quick_reply
+
+
         line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=message) for message in reply_messages])
+
+
 
     elif user_input == str('抽'):
         image_urls = []
