@@ -320,6 +320,7 @@ def handle_message(event):
             for message in reply_messages:
                 message.quick_reply = quick_reply
         else:
+            print("Type of reply_messages:", type(reply_messages))
             reply_messages.quick_reply = quick_reply
 
         line_bot_api.reply_message(event.reply_token, reply_messages)
