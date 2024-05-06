@@ -15,6 +15,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 
+
 #region #串接憑證
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gs_credentials.json"
 cred = credentials.Certificate("test-firebase-token.json")
@@ -92,6 +93,7 @@ def handle_message(event):
 
     }
  
+
     user_input_to_reply_message = {
     "抽圖/搜尋關鍵字/取得圖片": [
         "🎲隨機圖片：\n輸入「抽」，獲得隨機圖片\n\n📸發送圖片：\n輸入編號，獲得指定圖片\n例如輸入：G1140002\n\n🔍搜尋圖片：\n直接輸入關鍵字，出現包含此關鍵字的所有圖片編碼",
@@ -167,13 +169,9 @@ def handle_message(event):
     if not isinstance(user_image_index, int):
         user_image_index = 0
 
-    if 'history' not in user_data:
-        user_data['history'] = 0
-
     user_image_index = user_data.get('user_image_index', 0 )
-    
-    
     current_row_index = user_image_index
+	
 	
     if user_input == str("完整功能"):
         carousel_template = CarouselTemplate(
@@ -295,27 +293,9 @@ def handle_message(event):
 
     elif user_input == str('抽'):
         image_urls = []
-
-        if 'history' in user_data:
-            history = user_data['history']
-            if len(history) == 10:
-                history.pop(0)
-
-            random_row = random.choice(data)  
-            image_urls = random_row.get('圖片網址')  
-            new_image_index = data.index(random_row) 
-
-            while new_image_index in history:
-                random_row = random.choice(data)
-                new_image_index = data.index(random_row)
-
-            history.append(new_image_index)
-            user_data['history'] = history
-
-        else:
-        # 如果還沒有歷史紀錄，則建立一個空的列表
-            user_data['history'] = []
-        
+        random_row = random.choice(data)  
+        image_urls = random_row.get('圖片網址')  
+        new_image_index = data.index(random_row) 
         image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
     
         quick_reply_items = [
@@ -352,6 +332,7 @@ def handle_message(event):
                 line_bot_api.reply_message(event.reply_token, text_message)
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="請先抽圖片"))
+            print('current_row_index-4:',current_row_index)
 
     elif user_input == str("下一張"):
         if current_row_index is not None:
@@ -525,11 +506,16 @@ def handle_message(event):
             if str(user_input) in row[str('中字')]:
                 matched_data.append(f"【{row[str('編號')]}】 {row[str('中字')]}")
     
+    
+        if matched_data:
             reply_message = "【Gxxx13xx】此數為成員編號\n＊輸入編號時請去掉括號＊\n\n"
             reply_message += "\n".join(matched_data)
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
+        else:
+            reply_message = "無符合的資料"
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
 
-    user_ref.update(user_data)
+    ref.child(user_id).update({'user_image_index': new_image_index})
 
 if __name__ == "__main__":
     app.run()
