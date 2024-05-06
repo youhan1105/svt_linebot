@@ -317,20 +317,48 @@ def handle_message(event):
         quick_reply = QuickReply(items=quick_reply_items)
 
         if isinstance(reply_messages, list):
+            messages = []
             for message in reply_messages:
-                print("Type of message:", type(message))
+                if isinstance(message, str):
+                    # 如果 message 是字符串，則轉換為 TextSendMessage 物件
+                    messages.append(TextSendMessage(text=message))
+                else:
+                    messages.append(message)
+            # 設置 quick_reply
+            for message in messages:
                 message.quick_reply = quick_reply
         else:
-            print("Type of reply_messages:", type(reply_messages))
+            if isinstance(reply_messages, str):
+                # 如果 reply_messages 是字符串，則轉換為 TextSendMessage 物件
+                reply_messages = TextSendMessage(text=reply_messages)
+            # 設置 quick_reply
             reply_messages.quick_reply = quick_reply
 
         line_bot_api.reply_message(event.reply_token, reply_messages)
 
     elif user_input == str('抽'):
         image_urls = []
-        random_row = random.choice(data)  
-        image_urls = random_row.get('圖片網址')  
-        new_image_index = data.index(random_row) 
+
+        if 'history' in user_data:
+            history = user_data['history']
+            if len(history) == 10:
+                history.pop(0)
+
+            random_row = random.choice(data)  
+            image_urls = random_row.get('圖片網址')  
+            new_image_index = data.index(random_row) 
+
+            while new_image_index in history:
+                random_row = random.choice(data)
+                new_image_index = data.index(random_row)
+
+            history.append(new_image_index)
+            user_data['history'] = history
+
+        else:
+        # 如果還沒有歷史紀錄，則建立一個空的列表
+            user_data['history'] = []
+        
         image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
     
         quick_reply_items = [
