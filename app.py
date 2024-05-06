@@ -315,9 +315,6 @@ def handle_message(event):
             ]
 
         quick_reply = QuickReply(items=quick_reply_items)
-        for image_message in image_messages:
-            image_message.quick_reply = quick_reply
-
         line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=message) for message in reply_messages])
 
 
