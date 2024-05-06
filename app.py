@@ -315,13 +315,11 @@ def handle_message(event):
             ]
 
         quick_reply = QuickReply(items=quick_reply_items)
-            
-        for reply_messages in reply_messages:
-            reply_messages.quick_reply = quick_reply
-        
-        line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=message) for message in reply_messages])
 
+        for message in reply_messages:
+            message.quick_reply = quick_reply
 
+        line_bot_api.reply_message(event.reply_token, reply_messages)
 
     elif user_input == str('抽'):
         image_urls = []
