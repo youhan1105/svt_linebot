@@ -1,8 +1,0 @@
-line-bot-sdk
-gunicorn
-Flask
-gspread
-oauth2client
-emoji==1.4.2
-google-cloud-storage
-firebase_admin
