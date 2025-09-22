@@ -3,14 +3,14 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageSendMessage, QuickReply, QuickReplyButton, MessageAction, TemplateSendMessage, CarouselTemplate, CarouselColumn, URIAction
 from linebot.exceptions import InvalidSignatureError
 from google.cloud import storage
-from oauth2client.service_account import ServiceAccountCredentials
+from google.oauth2.service_account import Credentials
 
 import gspread, os, random, re, emoji, json, firebase_admin
 from firebase_admin import credentials, db
 
 #串接憑證
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gs_credentials.json"
-cred = credentials.Certificate("svt-linebot-firebase.json")  # <== 這行要改檔名、且不用絕對路徑
+cred = credentials.Certificate("svt-linebot-firebase.json") 
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://svt-linebot-default-rtdb.asia-southeast1.firebasedatabase.app/'
 })
