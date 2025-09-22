@@ -5,23 +5,15 @@ from linebot.exceptions import InvalidSignatureError
 from google.cloud import storage
 from oauth2client.service_account import ServiceAccountCredentials
 
-import gspread
-import os
-import random
-import re
-import emoji
-import json
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import db
+import gspread, os, random, re, emoji, json, firebase_admin
+from firebase_admin import credentials, db
 
-#region #串接憑證
+#串接憑證
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gs_credentials.json"
-cred = credentials.Certificate("svt-linebot-firebase.json")
+cred = credentials.Certificate("svt-linebot-firebase.json")  # <== 這行要改檔名、且不用絕對路徑
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://svt-linebot-default-rtdb.asia-southeast1.firebasedatabase.app/'
 })
-#endregion
 
 app = Flask(__name__)
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
