@@ -15,12 +15,11 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 
-
 #region #串接憑證
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gs_credentials.json"
-cred = credentials.Certificate("test-firebase-token.json")
+cred = credentials.Certificate("svt-linebot-firebase.json")
 firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://test-e2b8b-default-rtdb.asia-southeast1.firebasedatabase.app/'
+    'databaseURL': 'https://svt-linebot-default-rtdb.asia-southeast1.firebasedatabase.app//'
 })
 #endregion
 
@@ -28,9 +27,9 @@ app = Flask(__name__)
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
 #region #Linebot設定 
-channel_access_token = 'mCJ2+jdUUJZ7gvYlTbhHFcs9MPyXn16iV/67s376Fif/XG5a4Mo++0mkcwn2opdG5ExcAcgygV67cGfvBaMO4+sKIyjkuehgmIK1UsZX1CDTZ1FhFjREv4Nr9Mt0Hh6EJ8yDYxrI2stTMfvgDbDnxwdB04t89/1O/w1cDnyilFU='
+channel_access_token = '9yyTTXjLKSpmOyPcdmsRdMeB78C69zPzku1orgDZN1s+Vlzcy6h+Qjyj+RAJIImXOK5I9ehKb9NCU3SO8vyG5wBQySRgxqcN27O9uwkZvQ+aPk64WpKKPiGH4B0nyh3H3K6ZShPOIiTyb/77JPzNiAdB04t89/1O/w1cDnyilFU='
 line_bot_api = LineBotApi(channel_access_token)
-handler = WebhookHandler('a9e412bf3df519409feb6316871e750b')
+handler = WebhookHandler('1118e01218948edd0cadef0e190d6421')
 #endregion
 
 #region #Googlesheet串接
@@ -88,9 +87,10 @@ def handle_message(event):
         emoji.emojize("🦖"): "13",
         emoji.emojize("🦦"): "13",
         emoji.emojize("💰"): "工作",
-	    emoji.emojize("❤️"): "誇誇",
-	    emoji.emojize("❓"): "問答",
-
+	emoji.emojize("❤️"): "誇誇",
+	emoji.emojize("❓"): "問答",
+	emoji.emojize("⁉️"): "問答",
+	emoji.emojize("🍇"): "公園",
     }
  
 
@@ -108,7 +108,7 @@ def handle_message(event):
     "主題抽圖": [
         "💰好想下班：\n輸入「💰」，獲得打工人心聲迷因",
         "❤️愛的誇誇：\n輸入「❤️」，獲得正向句子的迷因",
-        "❓選擇之神：\n輸入「❓」，隨機獲得「肯定」或者「否定」迷因"
+        "❓選擇之神：\n輸入「❓」或「⁉️」，隨機獲得「肯定」或者「否定」迷因"
     ],
     "成員emoji列表": [
         "S.COUPS：🍒,🦁\n淨漢：🐰,😇,👼🏻,👼\nJoshua：🦌\nJun：🐱\nHoshi：🐯,🐹\n圓佑：🐈‍⬛,🎮,👓\nWOOZI：🍚🍑\nTHE 8：🎱,🐸\n珉奎：🐶,🌻\nDK：⚔️,🍕\n勝寛：🍊,🐻\nVernon：🐻‍❄️,🎧\nDino：🦖,🦦"
@@ -117,7 +117,7 @@ def handle_message(event):
         "取得圖片後，點選下方「取得編號」按鈕\n\n編號最前面的「英文字母+三位數字」即為圖片出處。\n\n需對照👉圖庫集數總覽\n\n下方選單→圖庫相關→集數總覽"
     ],
     "「取得編號」的作用？": [
-        "得知目前圖片的編號與關鍵字\n\n方便下一次搜尋此圖片，或者藉由編號得知圖片出處。"
+        "得知目前圖片的編號與關鍵字！\n\n方便下一次搜尋此圖片，或者藉由編號得知圖片出處"
     ],
     "編碼的數字意義": [
         "可分為：\n「開頭1英文+前面3數字」：系列與集數\n「中間2數字」：成員\n「最後2數字」：第幾張圖\n\n詳情參考👉圖庫編碼原則\n\n下方選單→圖庫相關→編碼原則"
@@ -139,7 +139,7 @@ def handle_message(event):
         "❤️愛的誇誇：\n輸入「❤️」，獲得正向句子的迷因"
     ],
     "主題抽圖： 選擇之神❓": [
-        "❓選擇之神：\n輸入「❓」，隨機獲得「肯定」或者「否定」迷因"
+        "❓選擇之神：\n輸入「❓」或「⁉️」，隨機獲得「肯定」或者「否定」迷因"
     ], 
     "雲端圖庫": [
         "此機器人與圖庫皆為無償提供><\n\n若想與朋友分享圖庫：\n⭕️邀請他們加入此官方帳號 \n❌請勿直接在社群媒體上分享下方連結",
@@ -202,7 +202,7 @@ def handle_message(event):
                 ),
                 CarouselColumn(
                     thumbnail_image_url="https://storage.googleapis.com/seventeen-image/linebot-image/many-qa.jpg",
-                    text="❓疑難雜症解決專區",
+                    text="🫡疑難雜症解決專區",
                     actions=[
                         MessageAction(label="成員emoji列表", text="成員emoji列表"),
                         MessageAction(label="點這裡看更多⋯", text="更多常見問題")                           
@@ -310,6 +310,26 @@ def handle_message(event):
 
         line_bot_api.reply_message(event.reply_token, image_messages)
 
+    elif user_input == str('Random'):
+        image_urls = []
+        random_row = random.choice(data)  
+        image_urls = random_row.get('圖片網址')  
+        new_image_index = data.index(random_row) 
+        image_messages = [ImageSendMessage(original_content_url=image_urls, preview_image_url=image_urls)]
+    
+        quick_reply_items = [
+            QuickReplyButton(action=MessageAction(label='Series Info', text='Series Info')),
+            QuickReplyButton(action=MessageAction(label='Previous', text='Previous')),
+            QuickReplyButton(action=MessageAction(label='Next', text='Next')),
+            QuickReplyButton(action=MessageAction(label='Random', text='Random'))
+        ]
+        quick_reply = QuickReply(items=quick_reply_items)
+        for image_message in image_messages:
+            image_message.quick_reply = quick_reply
+
+        line_bot_api.reply_message(event.reply_token, image_messages)
+	
+	
     elif user_input == str('取得編號'):
         if current_row_index is not None:
             if current_row_index < len(data):
@@ -367,6 +387,41 @@ def handle_message(event):
                 ]
                 quick_reply = QuickReply(items=quick_reply_items)
                 line_bot_api.reply_message(event.reply_token, TextSendMessage(text="已經是最後一張圖片了"))
+
+    elif user_input == str("Next"):
+        if current_row_index is not None:
+            current_row_index += 1
+
+            if current_row_index < len(data):
+                next_row = data[current_row_index]
+                next_image_urls = next_row.get('圖片網址')     
+                current_row_index = data.index(next_row) 
+                new_image_index = current_row_index
+                next_image_messages = [ImageSendMessage(original_content_url=next_image_urls, preview_image_url=next_image_urls)]
+            
+                quick_reply_items = [
+                    QuickReplyButton(action=MessageAction(label='Series Info', text='Series Info')),
+                    QuickReplyButton(action=MessageAction(label='Previous', text='Previous')),
+                    QuickReplyButton(action=MessageAction(label='Next', text='Next')),
+                    QuickReplyButton(action=MessageAction(label='Random', text='Random'))
+                ]
+                quick_reply = QuickReply(items=quick_reply_items)
+
+                for next_image_message in next_image_messages:
+                    next_image_message.quick_reply = quick_reply
+
+                line_bot_api.reply_message(event.reply_token, next_image_messages)
+
+            else:
+
+                quick_reply_items = [
+                    QuickReplyButton(action=MessageAction(label='取得編號', text='取得編號')),
+                    QuickReplyButton(action=MessageAction(label='上一張', text='上一張')),
+                    QuickReplyButton(action=MessageAction(label='抽', text='抽'))
+                ]
+                quick_reply = QuickReply(items=quick_reply_items)
+                line_bot_api.reply_message(event.reply_token, TextSendMessage(text="已經是最後一張圖片了"))
+
 
     elif user_input == str("上一張"):
         if current_row_index is not None:
